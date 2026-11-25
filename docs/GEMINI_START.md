@@ -19,3 +19,7 @@ Bootstrap prompt (Antigravity): see the end of `GEMINI.md`.
 - TTS candidates: `gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-3.1-flash-tts-preview`. Pick one for `MODEL_TTS` and record why.
 - **Decision (human, 26 Nov): free tier only. Billing will not be enabled.** Design every spike around free-tier rate and session limits. Record the measured limits (requests per minute, concurrent Live sessions, daily caps) in `docs/research/live-api.md`, and say clearly in the handoff if a plan assumption (6-minute video session, 1 fps frames, 4 model families) does not fit. Do not work around quotas with other keys or projects.
 - The key format starts with `AQ.`, not `AIza`. Send it as the `x-goog-api-key` header or through the SDK.
+
+## Hands-off mode
+
+For a long autonomous run (many tasks, sub-agents, TDD, verify real behaviour), paste the prompt in `docs/GEMINI_PROMPT.md`.

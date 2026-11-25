@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parampara T-003 Live API Spike</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; background: #111; color: #f5f5f5; }
+    video { width: 100%; max-width: 420px; border-radius: 12px; background: #000; }
+    button { font-size: 18px; padding: 12px 20px; margin: 8px 8px 8px 0; border-radius: 10px; border: none; }
+    #start { background: #4338ca; color: #fff; }
+    #stop { background: #374151; color: #fff; }
+    #captions { margin-top: 12px; padding: 12px; background: #1f2937; border-radius: 10px; min-height: 48px; font-size: 18px; }
+    #log { font-family: monospace; font-size: 12px; white-space: pre-wrap; margin-top: 12px; color: #9ca3af; }
+  </style>
+</head>
+<body>
+  <h2>Parampara — T-003 Live API Spike</h2>
+  <video id="cam" autoplay playsinline muted></video><br />
+  <button id="start">Start Live Coach</button>
+  <button id="stop" disabled>Stop</button>
+  <div id="captions">तैयार...</div>
+  <div id="log"></div>
+
+  <script type="module">
+    import { GoogleGenAI } from "https://esm.sh/@google/genai@1.30.0";
+
+    const cam = document.getElementById("cam");
+    const startBtn = document.getElementById("start");
+    const stopBtn = document.getElementById("stop");
+    const captions = document.getElementById("captions");
+    const logEl = document.getElementById("log");
+    const log = (m) => { logEl.textContent = `${new Date().toISOString().slice(11, 23)} ${m}\n` + logEl.textContent; };
+
+    let session = null, stream = null, frameTimer = null, audioCtx = null, playCtx = null, nextPlayTime = 0;
+
+    function toB64(bytes) {
+      let s = "";
+      for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+      return btoa(s);
+    }
+
+    function playPcm24k(b64) {
+      if (!playCtx) playCtx = new AudioContext({ sampleRate: 24000 });
+      const bin = atob(b64);
+      const pcm = new Int16Array(bin.length / 2);
+      for (let i = 0; i < pcm.length; i++) pcm[i] = bin.charCodeAt(i * 2) | (bin.charCodeAt(i * 2 + 1) << 8);
+      const buf = playCtx.createBuffer(1, pcm.length, 24000);
+      const ch = buf.getChannelData(0);
+      for (let i = 0; i < pcm.length; i++) ch[i] = pcm[i] / 32768;
+      const src = playCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(playCtx.destination);
+      const now = playCtx.currentTime;
+      nextPlayTime = Math.max(now, nextPlayTime);
+      src.start(nextPlayTime);
+      nextPlayTime += buf.duration;
+    }
+
+    startBtn.onclick = async () => {
+      startBtn.disabled = true; stopBtn.disabled = false;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: 1280, height: 720 },
+          audio: { channelCount: 1, sampleRate: 16000 },
+        });
+        cam.srcObject = stream;
+        const tok = await (await fetch("/token", { method: "POST" })).json();
+        log(`Token minted for ${tok.model}`);
+
+        const ai = new GoogleGenAI({ apiKey: tok.ephemeral_token, httpOptions: { apiVersion: "v1alpha" } });
+        session = await ai.live.connect({
+          model: tok.model,
+          callbacks: {
+            onopen: () => log("Live WebSocket open"),
+            onmessage: (msg) => {
+              if (msg.sessionResumptionUpdate?.newHandle) log("Resumption handle updated");
+              if (msg.goAway) log(`GoAway: ${msg.goAway.timeLeft}`);
+              if (msg.toolCall?.functionCalls) {
+                for (const fc of msg.toolCall.functionCalls) {
+                  log(`Tool call: ${fc.name}`);
+                  session.sendToolResponse({
+                    functionResponses: [{
+                      id: fc.id, name: fc.name,
+                      response: { step_id: "s1", title_hi: "तार और फेरूल जाँचें", mode: "full", verified_steps: [] },
+                    }],
+                  });
+                }
+              }
+              const sc = msg.serverContent;
+              if (sc?.outputTranscription?.text) captions.textContent += sc.outputTranscription.text;
+              if (sc?.turnComplete) captions.textContent += " ";
+              for (const p of sc?.modelTurn?.parts || []) {
+                if (p.inlineData?.data) playPcm24k(p.inlineData.data);
+              }
+            },
+            onerror: (e) => log(`Error: ${e.message || e}`),
+            onclose: (e) => log(`Closed: ${e.code} ${e.reason}`),
+          },
+        });
+
+        // 16 kHz mic capture
+        audioCtx = new AudioContext({ sampleRate: 16000 });
+        const src = audioCtx.createMediaStreamSource(stream);
+        const proc = audioCtx.createScriptProcessor(2048, 1, 1);
+        proc.onaudioprocess = (ev) => {
+          if (!session) return;
+          const f32 = ev.inputBuffer.getChannelData(0);
+          const i16 = new Int16Array(f32.length);
+          for (let i = 0; i < f32.length; i++) i16[i] = Math.max(-32768, Math.min(32767, f32[i] * 32767));
+          session.sendRealtimeInput({ media: { data: toB64(new Uint8Array(i16.buffer)), mimeType: "audio/pcm;rate=16000" } });
+        };
+        src.connect(proc); proc.connect(audioCtx.destination);
+
+        // 1 fps 768x768 JPEG frames
+        const canvas = document.createElement("canvas");
+        canvas.width = 768; canvas.height = 768;
+        const ctx = canvas.getContext("2d");
+        frameTimer = setInterval(() => {
+          if (!session || cam.videoWidth === 0) return;
+          ctx.drawImage(cam, 0, 0, 768, 768);
+          const b64 = canvas.toDataURL("image/jpeg", 0.7).split(",")[1];
+          session.sendRealtimeInput({ media: { data: b64, mimeType: "image/jpeg" } });
+        }, 1000);
+
+        session.sendClientContent({ turns: [{ role: "user", parts: [{ text: "नमस्ते उस्ताद, शुरू करें।" }] }], turnComplete: true });
+      } catch (err) {
+        log(`Failed: ${err}`);
+        startBtn.disabled = false; stopBtn.disabled = true;
+      }
+    };
+
+    stopBtn.onclick = () => {
+      clearInterval(frameTimer); frameTimer = null;
+      if (session) { session.close(); session = null; }
+      if (audioCtx) { audioCtx.close(); audioCtx = null; }
+      if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+      startBtn.disabled = false; stopBtn.disabled = true;
+      log("Stopped");
+    };
+  </script>
+</body>
+</html>

@@ -24,6 +24,14 @@ Anyone may propose. The human and Claude Code approve. After approval, Claude up
 - Decision: approved (Render free web service), by human delegation to claude, 2026-11-26. Plan text updated in v1.1. The Render service is created when T-017 adds the Dockerfile.
 - Done in: -
 
+## CR-002: Allow test-vector JSON files under `contracts/fixtures/`
+- Raised by: gemini, 2026-11-26 01:06 IST, while working on T-031
+- Problem: T-031 AC1 asks for `contracts/fixtures/vc-vectors.json`, but `scripts/validate_fixtures.py` (part of `make check`) fails on any top-level `contracts/fixtures/*.json` whose filename does not match a schema in `contracts/schemas/`.
+- Proposal: Either ignore `*-vectors.json` in `scripts/validate_fixtures.py` or keep shared test vectors in `contracts/fixtures/vectors/vc-vectors.json` (currently implemented under `vectors/` so the gate stays green).
+- Affected sections: 20.2, 32 (T-031, T-033)   Affected tasks: T-031, T-033
+- Decision: open
+- Done in: -
+
 ## CR-003: give_hint level parameter must not use an integer enum
 - Raised by: claude, 2026-11-26, while reviewing T-016 (docs/audits/2026-11-26-gemini-batch-1-review.md)
 - Problem: 16.5 declares `"level": {"type": "integer", "enum": [1, 2, 3]}`. The Gemini schema only allows string enums; the SDK rejects the declaration, so the coach would get no tools.

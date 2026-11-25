@@ -19,6 +19,7 @@ from parampara.api.routes import (
     sessions,
     skill_versions,
     traces,
+    verify,
 )
 from parampara.api.settings import get_settings
 from parampara.db.pool import close_pool, init_pool
@@ -72,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(licences.router)
     app.include_router(sessions.router)
     app.include_router(live_token.router)
+    app.include_router(verify.router)
     return app
 
 

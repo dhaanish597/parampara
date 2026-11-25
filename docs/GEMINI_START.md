@@ -12,3 +12,10 @@ Claude Code bootstrapped the repo on 25 Nov. Done: T-001 scaffold, T-002 contrac
 6. `make check` must pass. Open a PR titled `T-003: Live API and TTS spike`.
 
 Bootstrap prompt (Antigravity): see the end of `GEMINI.md`.
+
+## Head start (checked by Claude on 25 Nov with the project key, models list endpoint)
+
+- Present on the key: `gemini-3.8-live`, `gemini-3.8-live-extended-thinking`, `gemini-3.1-flash-live-preview` (all `bidiGenerateContent`), `gemini-3.5-flash`, `gemini-3.5-flash-lite`.
+- TTS candidates: `gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-3.1-flash-tts-preview`. Pick one for `MODEL_TTS` and record why.
+- The key is on the **free tier** until the human enables billing for the Google project "Parampara". If Live quotas are too low, tell the human; do not work around it.
+- The key format starts with `AQ.`, not `AIza`. Send it as the `x-goog-api-key` header or through the SDK.

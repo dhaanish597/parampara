@@ -12,7 +12,7 @@ contracts:
 	@bash scripts/gen_contracts.sh
 
 db-reset:
-	@echo "db-reset arrives with T-010 (migrations and seed)"; exit 1
+	@bash db/reset.sh
 
 dev:
 	@echo "dev arrives with T-011 and T-012"; exit 1

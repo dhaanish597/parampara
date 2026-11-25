@@ -10,7 +10,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from parampara.api.errors import register_error_handlers
-from parampara.api.routes import auth, health, skill_versions, traces
+from parampara.api.routes import auth, consents, health, skill_versions, traces
 from parampara.api.settings import get_settings
 from parampara.db.pool import close_pool, init_pool
 from parampara.telemetry.recorder import get_telemetry_bus
@@ -59,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(skill_versions.router)
     app.include_router(traces.router)
+    app.include_router(consents.router)
     return app
 
 

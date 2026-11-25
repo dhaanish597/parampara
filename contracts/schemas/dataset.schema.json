@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/dataset.schema.json",
+  "title": "Dataset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "skill_version_id",
+    "scope",
+    "name",
+    "episode_count",
+    "hours",
+    "format",
+    "export_path",
+    "data_card_md",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "skill_version_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "scope": {
+      "enum": [
+        "train_own_org",
+        "train_other_employers",
+        "robotics_research",
+        "robotics_commercial"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "episode_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "format": {
+      "const": "lerobot_v3.0"
+    },
+    "export_path": {
+      "type": "string"
+    },
+    "data_card_md": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

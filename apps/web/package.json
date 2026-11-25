@@ -1,0 +1,14 @@
+{
+  "name": "@parampara/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@parampara/contracts": "workspace:*"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/verify-request.schema.json",
+  "title": "VerifyRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "step_id",
+    "frame_jpeg_b64",
+    "frame_t_ms",
+    "edge_summary",
+    "trigger"
+  ],
+  "properties": {
+    "step_id": {
+      "type": "string"
+    },
+    "frame_jpeg_b64": {
+      "type": "string"
+    },
+    "frame_t_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "edge_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_key",
+        "checks"
+      ],
+      "properties": {
+        "edge_key": {
+          "type": "boolean"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "held_part": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "trigger": {
+      "enum": [
+        "edge",
+        "coach",
+        "manual"
+      ]
+    }
+  }
+}

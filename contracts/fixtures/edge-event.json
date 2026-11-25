@@ -1,0 +1,11 @@
+{
+  "kind": "risk",
+  "step_id": "s3",
+  "rule_or_check_id": "h1",
+  "part_id": "wire_phase",
+  "zone_id": "zone_N",
+  "t_ms": 52000,
+  "detail": {
+    "dwell_ms": 420
+  }
+}

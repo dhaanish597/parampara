@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/consent-record.schema.json",
+  "title": "ConsentRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "seq",
+    "subject_user_id",
+    "action",
+    "target",
+    "scopes",
+    "purpose",
+    "expires_at",
+    "notice_version",
+    "comprehension_passed",
+    "created_at",
+    "prev_hash",
+    "hash"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "subject_user_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "action": {
+      "enum": [
+        "grant",
+        "revoke"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clip_id",
+        "session_id"
+      ],
+      "properties": {
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "train_own_org",
+          "train_other_employers",
+          "robotics_research",
+          "robotics_commercial"
+        ]
+      }
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "notice_version": {
+      "type": "string"
+    },
+    "comprehension_passed": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "prev_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

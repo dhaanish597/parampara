@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/licence.schema.json",
+  "title": "Licence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "dataset_id",
+    "buyer_org_id",
+    "price_paise",
+    "terms",
+    "watermark_id",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "dataset_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "buyer_org_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "price_paise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "terms": {
+      "$ref": "#/$defs/LicenceTerms"
+    },
+    "watermark_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "LicenceTerms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "no_individual_productivity_scoring",
+        "no_biometric_identification",
+        "attribution_required",
+        "term_months"
+      ],
+      "properties": {
+        "scope": {
+          "enum": [
+            "robotics_research",
+            "robotics_commercial"
+          ]
+        },
+        "no_individual_productivity_scoring": {
+          "const": true
+        },
+        "no_biometric_identification": {
+          "const": true
+        },
+        "attribution_required": {
+          "type": "boolean"
+        },
+        "term_months": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/session-start.schema.json",
+  "title": "SessionStart",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/SessionStartRequest"
+    },
+    {
+      "$ref": "#/$defs/SessionStartResponse"
+    }
+  ],
+  "$defs": {
+    "SessionStartRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_version_id",
+        "device"
+      ],
+      "properties": {
+        "skill_version_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "device": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ua",
+            "w",
+            "h"
+          ],
+          "properties": {
+            "ua": {
+              "type": "string"
+            },
+            "w": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "h": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "SessionStartResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "mode",
+        "needs_help_steps",
+        "skill_graph",
+        "skill_version_id",
+        "master_name",
+        "trainee_name",
+        "live",
+        "hazard_audio",
+        "upload"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "mode": {
+          "enum": [
+            "full",
+            "hint",
+            "watch",
+            "exam"
+          ]
+        },
+        "needs_help_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skill_graph": {
+          "$ref": "skill-graph.schema.json"
+        },
+        "skill_version_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "master_name": {
+          "type": "string"
+        },
+        "trainee_name": {
+          "type": "string"
+        },
+        "live": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ephemeral_token",
+            "model",
+            "expires_at",
+            "config"
+          ],
+          "properties": {
+            "ephemeral_token": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "expires_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "config": {
+              "type": "object"
+            }
+          }
+        },
+        "hazard_audio": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "hazard_id",
+              "url"
+            ],
+            "properties": {
+              "hazard_id": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "upload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "clip_id",
+            "signed_url",
+            "expires_at"
+          ],
+          "properties": {
+            "clip_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "signed_url": {
+              "type": "string"
+            },
+            "expires_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    }
+  }
+}

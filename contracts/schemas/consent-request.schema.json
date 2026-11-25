@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/consent-request.schema.json",
+  "title": "ConsentRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action",
+    "target",
+    "scopes",
+    "expires_at",
+    "notice_version",
+    "comprehension_passed"
+  ],
+  "properties": {
+    "action": {
+      "enum": [
+        "grant",
+        "revoke"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "clip_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "train_own_org",
+          "train_other_employers",
+          "robotics_research",
+          "robotics_commercial"
+        ]
+      }
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "notice_version": {
+      "type": "string"
+    },
+    "comprehension_passed": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "status": "completed",
+  "mode": "full",
+  "steps": [
+    {
+      "step_id": "s1",
+      "completed": true,
+      "two_key": true,
+      "hint_level_max": 0,
+      "errors": [],
+      "duration_ms": 18000
+    }
+  ],
+  "clean_run": true,
+  "total_ms": 170000,
+  "mastery": [
+    {
+      "step_id": "s1",
+      "p_learned": 0.6
+    }
+  ],
+  "next_mode": "hint",
+  "credential_eligible": false,
+  "policy": {
+    "profile": "demo",
+    "min_consecutive_clean_runs": 1,
+    "mastery_threshold": 0.5,
+    "require_exam_mode": false,
+    "require_cosign": true
+  }
+}

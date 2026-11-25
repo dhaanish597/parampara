@@ -1,0 +1,33 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+service-account*.json
+
+# node
+node_modules/
+.next/
+.turbo/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# python
+__pycache__/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# local
+.DS_Store
+.supabase/
+supabase/.temp/
+evals/runs/*
+!evals/runs/.gitkeep
+spikes/**/node_modules/
+services/api/.gen-check.*/

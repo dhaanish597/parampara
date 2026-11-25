@@ -1,0 +1,13 @@
+{
+  "step_id": "s2",
+  "frame_jpeg_b64": "/9j/4AAQSkZJRg==",
+  "frame_t_ms": 30000,
+  "edge_summary": {
+    "edge_key": true,
+    "checks": [
+      "e2"
+    ],
+    "held_part": null
+  },
+  "trigger": "edge"
+}

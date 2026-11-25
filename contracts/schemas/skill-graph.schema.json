@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/skill-graph.schema.json",
+  "title": "SkillGraph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "title", "summary", "domain", "parts", "zones", "steps", "hazards", "credential_policy"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "title": { "$ref": "#/$defs/LocalizedText" },
+    "summary": { "$ref": "#/$defs/LocalizedText" },
+    "domain": { "enum": ["electrical", "garment", "pharma", "assembly", "other"] },
+    "tools_required": { "type": "array", "items": { "$ref": "#/$defs/NamedItem" } },
+    "parts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Part" } },
+    "zones": { "type": "array", "items": { "$ref": "#/$defs/Zone" } },
+    "steps": { "type": "array", "minItems": 2, "maxItems": 12, "items": { "$ref": "#/$defs/Step" } },
+    "hazards": { "type": "array", "items": { "$ref": "#/$defs/Hazard" } },
+    "credential_policy": { "$ref": "#/$defs/CredentialPolicy" }
+  },
+  "$defs": {
+    "LocalizedText": {
+      "type": "object", "additionalProperties": false, "required": ["en", "hi"],
+      "properties": { "en": { "type": "string", "minLength": 1 }, "hi": { "type": "string", "minLength": 1 } }
+    },
+    "NamedItem": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name"],
+      "properties": { "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,31}$" }, "name": { "$ref": "#/$defs/LocalizedText" } }
+    },
+    "Part": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "role", "colour_hint"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,31}$" },
+        "name": { "$ref": "#/$defs/LocalizedText" },
+        "role": { "type": "string" },
+        "colour_hint": { "type": "string", "description": "Colour the master used, in plain English, e.g. red. Calibrated per session." }
+      }
+    },
+    "Zone": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "calibration_prompt"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^zone_[A-Za-z0-9_]{1,24}$" },
+        "name": { "$ref": "#/$defs/LocalizedText" },
+        "calibration_prompt": { "$ref": "#/$defs/LocalizedText" }
+      }
+    },
+    "Step": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "order", "title", "instruction", "source_segment", "success_predicates", "edge_checks", "common_errors", "tips", "expected_duration_s", "critical"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^s[0-9]{1,2}$" },
+        "order": { "type": "integer", "minimum": 1 },
+        "title": { "$ref": "#/$defs/LocalizedText" },
+        "instruction": { "$ref": "#/$defs/LocalizedText" },
+        "source_segment": {
+          "type": "object", "additionalProperties": false, "required": ["start_ms", "end_ms"],
+          "properties": { "start_ms": { "type": "integer", "minimum": 0 }, "end_ms": { "type": "integer", "minimum": 0 } }
+        },
+        "reference_keyframe": {
+          "type": "object", "additionalProperties": false, "required": ["clip_id", "ts_ms"],
+          "properties": { "clip_id": { "type": "string" }, "ts_ms": { "type": "integer", "minimum": 0 } }
+        },
+        "success_predicates": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Predicate" } },
+        "edge_checks": { "type": "array", "items": { "$ref": "#/$defs/EdgeCheck" } },
+        "common_errors": { "type": "array", "items": { "$ref": "#/$defs/CommonError" } },
+        "tips": { "type": "array", "items": { "$ref": "#/$defs/Tip" } },
+        "expected_duration_s": { "type": "integer", "minimum": 1, "maximum": 600 },
+        "critical": { "type": "boolean" }
+      }
+    },
+    "Predicate": {
+      "type": "object", "additionalProperties": false, "required": ["id", "kind", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["object_in_zone", "object_state", "order", "count", "visual_detail"] },
+        "description": { "type": "string", "description": "English, one checkable visual sentence." },
+        "part_id": { "type": "string" },
+        "zone_id": { "type": "string" }
+      }
+    },
+    "EdgeCheck": {
+      "type": "object", "additionalProperties": false, "required": ["id", "kind", "min_dwell_ms"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["part_in_zone", "hands_settled"] },
+        "part_id": { "type": "string" },
+        "zone_id": { "type": "string" },
+        "min_dwell_ms": { "type": "integer", "minimum": 200, "maximum": 5000 }
+      }
+    },
+    "CommonError": {
+      "type": "object", "additionalProperties": false, "required": ["id", "description", "severity", "origin"],
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "$ref": "#/$defs/LocalizedText" },
+        "severity": { "enum": ["minor", "major", "critical"] },
+        "origin": { "enum": ["narration", "interview", "inferred"] },
+        "hazard_id": { "type": "string" }
+      }
+    },
+    "Tip": {
+      "type": "object", "additionalProperties": false, "required": ["id", "text", "source"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "$ref": "#/$defs/LocalizedText" },
+        "source": { "enum": ["narration", "interview", "supervisor"] }
+      }
+    },
+    "Hazard": {
+      "type": "object", "additionalProperties": false, "required": ["id", "step_id", "description", "severity", "rule", "interrupt_text"],
+      "properties": {
+        "id": { "type": "string" },
+        "step_id": { "type": "string" },
+        "description": { "$ref": "#/$defs/LocalizedText" },
+        "severity": { "enum": ["major", "critical"] },
+        "rule": { "$ref": "#/$defs/EdgeRule" },
+        "interrupt_text": { "$ref": "#/$defs/LocalizedText" },
+        "interrupt_audio_path": { "type": "string", "description": "Storage path of the pre-generated Hindi clip. Set by the TTS step." }
+      }
+    },
+    "EdgeRule": {
+      "type": "object", "additionalProperties": false, "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["wrong_part_near_zone", "out_of_order"] },
+        "part_id": { "type": "string" },
+        "forbidden_zone_id": { "type": "string" },
+        "radius": { "type": "number", "minimum": 0.02, "maximum": 0.25, "default": 0.07 },
+        "min_ms": { "type": "integer", "minimum": 150, "maximum": 3000, "default": 400 }
+      }
+    },
+    "CredentialPolicy": {
+      "type": "object", "additionalProperties": false, "required": ["profile", "min_consecutive_clean_runs", "mastery_threshold", "require_exam_mode", "require_cosign"],
+      "properties": {
+        "profile": { "enum": ["production", "demo"] },
+        "min_consecutive_clean_runs": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "mastery_threshold": { "type": "number", "minimum": 0.5, "maximum": 0.99 },
+        "require_exam_mode": { "type": "boolean" },
+        "require_cosign": { "type": "boolean" }
+      }
+    }
+  }
+}

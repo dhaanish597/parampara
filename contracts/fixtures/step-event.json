@@ -1,0 +1,10 @@
+{
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "step_id": "s3",
+  "type": "risk",
+  "t_ms": 52000,
+  "payload": {
+    "hazard_id": "h1"
+  },
+  "frame_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

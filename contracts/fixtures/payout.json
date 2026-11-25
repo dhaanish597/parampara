@@ -1,0 +1,8 @@
+{
+  "id": "00000000-0000-4000-8000-000000000005",
+  "royalty_event_id": "00000000-0000-4000-8000-000000000011",
+  "provider": "simulated",
+  "provider_ref": "sim_0001",
+  "status": "queued",
+  "created_at": "2026-11-25T10:00:00Z"
+}

@@ -1,0 +1,485 @@
+{
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "mode": "full",
+  "needs_help_steps": [],
+  "skill_graph": {
+    "schema_version": "1.0",
+    "title": {
+      "en": "3-way terminal block wiring",
+      "hi": "3-वे टर्मिनल ब्लॉक वायरिंग"
+    },
+    "summary": {
+      "en": "Connect earth, neutral and phase wires to a terminal block on a dead training bench.",
+      "hi": "बिना बिजली वाले ट्रेनिंग बेंच पर अर्थ, न्यूट्रल और फेज़ तार टर्मिनल ब्लॉक में लगाना।"
+    },
+    "domain": "electrical",
+    "tools_required": [
+      {
+        "id": "screwdriver",
+        "name": {
+          "en": "Small screwdriver",
+          "hi": "छोटा पेचकस"
+        }
+      },
+      {
+        "id": "crimper",
+        "name": {
+          "en": "Ferrule crimper",
+          "hi": "फेरूल क्रिम्पर"
+        }
+      }
+    ],
+    "parts": [
+      {
+        "id": "wire_phase",
+        "name": {
+          "en": "Phase wire",
+          "hi": "फेज़ तार"
+        },
+        "role": "phase",
+        "colour_hint": "red"
+      },
+      {
+        "id": "wire_neutral",
+        "name": {
+          "en": "Neutral wire",
+          "hi": "न्यूट्रल तार"
+        },
+        "role": "neutral",
+        "colour_hint": "black"
+      },
+      {
+        "id": "wire_earth",
+        "name": {
+          "en": "Earth wire",
+          "hi": "अर्थ तार"
+        },
+        "role": "earth",
+        "colour_hint": "green"
+      }
+    ],
+    "zones": [
+      {
+        "id": "zone_L",
+        "name": {
+          "en": "L terminal",
+          "hi": "L टर्मिनल"
+        },
+        "calibration_prompt": {
+          "en": "Tap the L terminal",
+          "hi": "L टर्मिनल पर टैप करें"
+        }
+      },
+      {
+        "id": "zone_N",
+        "name": {
+          "en": "N terminal",
+          "hi": "N टर्मिनल"
+        },
+        "calibration_prompt": {
+          "en": "Tap the N terminal",
+          "hi": "N टर्मिनल पर टैप करें"
+        }
+      },
+      {
+        "id": "zone_PE",
+        "name": {
+          "en": "PE terminal",
+          "hi": "PE टर्मिनल"
+        },
+        "calibration_prompt": {
+          "en": "Tap the PE terminal",
+          "hi": "PE टर्मिनल पर टैप करें"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "s1",
+        "order": 1,
+        "title": {
+          "en": "Check wires and ferrules",
+          "hi": "तार और फेरूल जाँचें"
+        },
+        "instruction": {
+          "en": "Check that all three wires are stripped about 8 mm and each has a ferrule crimped on.",
+          "hi": "देखें कि तीनों तार लगभग 8 मिमी छीले हैं और हर तार पर फेरूल लगा है।"
+        },
+        "source_segment": {
+          "start_ms": 0,
+          "end_ms": 20000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 2000
+        },
+        "success_predicates": [
+          {
+            "id": "p1",
+            "kind": "object_state",
+            "description": "All three wires show a metal ferrule at the stripped end."
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e1",
+            "kind": "hands_settled",
+            "min_dwell_ms": 800
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m3",
+            "description": {
+              "en": "A ferrule is missing",
+              "hi": "फेरूल नहीं लगा है"
+            },
+            "severity": "minor",
+            "origin": "narration"
+          }
+        ],
+        "tips": [
+          {
+            "id": "t1",
+            "text": {
+              "en": "Tug each ferrule lightly to be sure it is crimped.",
+              "hi": "फेरूल को हल्का खींचकर देखें कि कसा है।"
+            },
+            "source": "narration"
+          }
+        ],
+        "expected_duration_s": 20,
+        "critical": false
+      },
+      {
+        "id": "s2",
+        "order": 2,
+        "title": {
+          "en": "Earth first: green wire into PE",
+          "hi": "पहले अर्थ: हरा तार PE में"
+        },
+        "instruction": {
+          "en": "Put the green wire fully into the PE terminal.",
+          "hi": "हरे तार को PE टर्मिनल में पूरा डालें।"
+        },
+        "source_segment": {
+          "start_ms": 20000,
+          "end_ms": 50000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 22000
+        },
+        "success_predicates": [
+          {
+            "id": "p2",
+            "kind": "object_in_zone",
+            "description": "The green wire end is fully inside the PE terminal.",
+            "part_id": "wire_earth",
+            "zone_id": "zone_PE"
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e2",
+            "kind": "part_in_zone",
+            "min_dwell_ms": 1000,
+            "part_id": "wire_earth",
+            "zone_id": "zone_PE"
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m2",
+            "description": {
+              "en": "Earth step skipped",
+              "hi": "अर्थ वाला कदम छोड़ दिया"
+            },
+            "severity": "major",
+            "origin": "narration"
+          }
+        ],
+        "tips": [
+          {
+            "id": "t2",
+            "text": {
+              "en": "Always connect earth first.",
+              "hi": "अर्थ हमेशा सबसे पहले लगाएँ।"
+            },
+            "source": "narration"
+          }
+        ],
+        "expected_duration_s": 30,
+        "critical": true
+      },
+      {
+        "id": "s3",
+        "order": 3,
+        "title": {
+          "en": "Neutral: black wire into N",
+          "hi": "न्यूट्रल: काला तार N में"
+        },
+        "instruction": {
+          "en": "Put the black wire fully into the N terminal.",
+          "hi": "काले तार को N टर्मिनल में पूरा डालें।"
+        },
+        "source_segment": {
+          "start_ms": 50000,
+          "end_ms": 80000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 52000
+        },
+        "success_predicates": [
+          {
+            "id": "p3",
+            "kind": "object_in_zone",
+            "description": "The black wire end is fully inside the N terminal.",
+            "part_id": "wire_neutral",
+            "zone_id": "zone_N"
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e3",
+            "kind": "part_in_zone",
+            "min_dwell_ms": 1000,
+            "part_id": "wire_neutral",
+            "zone_id": "zone_N"
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m1",
+            "description": {
+              "en": "Phase wire put into N",
+              "hi": "फेज़ तार N में डाल दिया"
+            },
+            "severity": "critical",
+            "origin": "narration",
+            "hazard_id": "h1"
+          }
+        ],
+        "tips": [
+          {
+            "id": "t3",
+            "text": {
+              "en": "Check the sticker on the terminal before inserting.",
+              "hi": "डालने से पहले टर्मिनल का स्टिकर देखें।"
+            },
+            "source": "narration"
+          }
+        ],
+        "expected_duration_s": 30,
+        "critical": true
+      },
+      {
+        "id": "s4",
+        "order": 4,
+        "title": {
+          "en": "Phase: red wire into L",
+          "hi": "फेज़: लाल तार L में"
+        },
+        "instruction": {
+          "en": "Put the red wire fully into the L terminal.",
+          "hi": "लाल तार को L टर्मिनल में पूरा डालें।"
+        },
+        "source_segment": {
+          "start_ms": 80000,
+          "end_ms": 110000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 82000
+        },
+        "success_predicates": [
+          {
+            "id": "p4",
+            "kind": "object_in_zone",
+            "description": "The red wire end is fully inside the L terminal.",
+            "part_id": "wire_phase",
+            "zone_id": "zone_L"
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e4",
+            "kind": "part_in_zone",
+            "min_dwell_ms": 1000,
+            "part_id": "wire_phase",
+            "zone_id": "zone_L"
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m1b",
+            "description": {
+              "en": "Wire put in the wrong terminal",
+              "hi": "तार गलत टर्मिनल में डाला"
+            },
+            "severity": "major",
+            "origin": "narration"
+          }
+        ],
+        "tips": [
+          {
+            "id": "t4",
+            "text": {
+              "en": "Red goes only to L.",
+              "hi": "लाल तार केवल L में जाता है।"
+            },
+            "source": "narration"
+          }
+        ],
+        "expected_duration_s": 30,
+        "critical": true
+      },
+      {
+        "id": "s5",
+        "order": 5,
+        "title": {
+          "en": "Tighten all three screws",
+          "hi": "तीनों स्क्रू कसें"
+        },
+        "instruction": {
+          "en": "Tighten each terminal screw until the wire is clamped firmly.",
+          "hi": "हर टर्मिनल का स्क्रू तब तक कसें जब तक तार मज़बूती से न पकड़ ले।"
+        },
+        "source_segment": {
+          "start_ms": 110000,
+          "end_ms": 140000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 112000
+        },
+        "success_predicates": [
+          {
+            "id": "p5",
+            "kind": "object_state",
+            "description": "A screwdriver is on each terminal screw and no insulation is under a clamp."
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e5",
+            "kind": "hands_settled",
+            "min_dwell_ms": 800
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m4",
+            "description": {
+              "en": "Insulation under the clamp",
+              "hi": "इन्सुलेशन क्लैंप के नीचे आ गया"
+            },
+            "severity": "major",
+            "origin": "narration"
+          }
+        ],
+        "tips": [],
+        "expected_duration_s": 30,
+        "critical": false
+      },
+      {
+        "id": "s6",
+        "order": 6,
+        "title": {
+          "en": "Pull test each wire",
+          "hi": "हर तार को खींचकर जाँचें"
+        },
+        "instruction": {
+          "en": "Tug each wire gently. None should move.",
+          "hi": "हर तार को हल्के से खींचें। कोई तार हिलना नहीं चाहिए।"
+        },
+        "source_segment": {
+          "start_ms": 140000,
+          "end_ms": 170000
+        },
+        "reference_keyframe": {
+          "clip_id": "00000000-0000-4000-8000-000000000004",
+          "ts_ms": 142000
+        },
+        "success_predicates": [
+          {
+            "id": "p6",
+            "kind": "order",
+            "description": "Each of the three wires is tugged one after another."
+          }
+        ],
+        "edge_checks": [
+          {
+            "id": "e6",
+            "kind": "hands_settled",
+            "min_dwell_ms": 800
+          }
+        ],
+        "common_errors": [
+          {
+            "id": "m5",
+            "description": {
+              "en": "Steps done out of order",
+              "hi": "कदम क्रम से नहीं किए"
+            },
+            "severity": "minor",
+            "origin": "narration"
+          }
+        ],
+        "tips": [],
+        "expected_duration_s": 30,
+        "critical": false
+      }
+    ],
+    "hazards": [
+      {
+        "id": "h1",
+        "step_id": "s3",
+        "description": {
+          "en": "Phase wire held near the N terminal",
+          "hi": "फेज़ तार N टर्मिनल के पास है"
+        },
+        "severity": "critical",
+        "rule": {
+          "kind": "wrong_part_near_zone",
+          "part_id": "wire_phase",
+          "forbidden_zone_id": "zone_N",
+          "radius": 0.07,
+          "min_ms": 400
+        },
+        "interrupt_text": {
+          "en": "Stop! The red wire does not go in N.",
+          "hi": "रुको! लाल तार N में नहीं जाता।"
+        }
+      }
+    ],
+    "credential_policy": {
+      "profile": "demo",
+      "min_consecutive_clean_runs": 1,
+      "mastery_threshold": 0.5,
+      "require_exam_mode": false,
+      "require_cosign": true
+    }
+  },
+  "skill_version_id": "00000000-0000-4000-8000-000000000002",
+  "master_name": "Master",
+  "trainee_name": "Trainee",
+  "live": {
+    "ephemeral_token": "auth_tokens/example",
+    "model": "gemini-3.8-live",
+    "expires_at": "2026-11-25T10:00:00Z",
+    "config": {}
+  },
+  "hazard_audio": [
+    {
+      "hazard_id": "h1",
+      "url": "https://example.test/h1.mp3"
+    }
+  ],
+  "upload": {
+    "clip_id": "00000000-0000-4000-8000-000000000004",
+    "signed_url": "https://example.test/upload",
+    "expires_at": "2026-11-25T10:00:00Z"
+  }
+}

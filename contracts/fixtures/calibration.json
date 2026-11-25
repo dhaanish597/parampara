@@ -1,0 +1,38 @@
+{
+  "zones": [
+    {
+      "zone_id": "zone_L",
+      "x": 0.2,
+      "y": 0.5,
+      "radius": 0.06
+    },
+    {
+      "zone_id": "zone_N",
+      "x": 0.5,
+      "y": 0.5,
+      "radius": 0.06
+    },
+    {
+      "zone_id": "zone_PE",
+      "x": 0.8,
+      "y": 0.5,
+      "radius": 0.06
+    }
+  ],
+  "parts": [
+    {
+      "part_id": "wire_phase",
+      "h_deg": 0,
+      "s": 0.8,
+      "v": 0.7,
+      "tol_h_deg": 15,
+      "min_s": 0.4,
+      "min_v": 0.2,
+      "max_v": 1,
+      "dark": false
+    }
+  ],
+  "frame_w": 640,
+  "frame_h": 480,
+  "created_at": "2026-11-25T10:00:00Z"
+}

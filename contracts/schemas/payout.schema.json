@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/payout.schema.json",
+  "title": "Payout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "royalty_event_id",
+    "provider",
+    "provider_ref",
+    "status",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "royalty_event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "provider": {
+      "enum": [
+        "razorpayx_test",
+        "simulated"
+      ]
+    },
+    "provider_ref": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "processed",
+        "failed"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

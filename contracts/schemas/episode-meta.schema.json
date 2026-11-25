@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/episode-meta.schema.json",
+  "title": "EpisodeMeta",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "episode_index",
+    "session_id",
+    "contributor_pseudonym",
+    "role",
+    "consent_record_hash",
+    "steps",
+    "errors",
+    "corrections",
+    "quality",
+    "duration_ms",
+    "language_instruction"
+  ],
+  "properties": {
+    "episode_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "contributor_pseudonym": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "master",
+        "trainee"
+      ]
+    },
+    "consent_record_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "steps": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "errors": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "corrections": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "quality": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "language_instruction": {
+      "type": "string"
+    }
+  }
+}

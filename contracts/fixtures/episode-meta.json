@@ -1,0 +1,13 @@
+{
+  "episode_index": 0,
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "contributor_pseudonym": "worker-0001",
+  "role": "master",
+  "consent_record_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "steps": 6,
+  "errors": 0,
+  "corrections": 0,
+  "quality": 0.9,
+  "duration_ms": 170000,
+  "language_instruction": "Wire earth, neutral and phase into the terminal block."
+}

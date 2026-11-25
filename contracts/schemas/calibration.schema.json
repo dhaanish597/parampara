@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/calibration.schema.json",
+  "title": "Calibration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "zones",
+    "parts",
+    "frame_w",
+    "frame_h",
+    "created_at"
+  ],
+  "properties": {
+    "zones": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ZoneCalibration"
+      }
+    },
+    "parts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PartProfile"
+      }
+    },
+    "frame_w": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "frame_h": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "ZoneCalibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "zone_id",
+        "x",
+        "y",
+        "radius"
+      ],
+      "properties": {
+        "zone_id": {
+          "type": "string"
+        },
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "PartProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "part_id",
+        "h_deg",
+        "s",
+        "v",
+        "tol_h_deg",
+        "min_s",
+        "min_v",
+        "max_v",
+        "dark"
+      ],
+      "properties": {
+        "part_id": {
+          "type": "string"
+        },
+        "h_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "s": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tol_h_deg": {
+          "type": "number"
+        },
+        "min_s": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dark": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

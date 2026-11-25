@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/session-summary.schema.json",
+  "title": "SessionSummary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "session_id",
+    "status",
+    "mode",
+    "steps",
+    "clean_run",
+    "total_ms",
+    "mastery",
+    "next_mode",
+    "credential_eligible",
+    "policy"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "aborted"
+      ]
+    },
+    "mode": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StepOutcome"
+      }
+    },
+    "clean_run": {
+      "type": "boolean"
+    },
+    "total_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mastery": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "p_learned"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string"
+          },
+          "p_learned": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "next_mode": {
+      "type": "string"
+    },
+    "credential_eligible": {
+      "type": "boolean"
+    },
+    "policy": {
+      "$ref": "skill-graph.schema.json#/$defs/CredentialPolicy"
+    }
+  },
+  "$defs": {
+    "StepOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "completed",
+        "two_key",
+        "hint_level_max",
+        "errors",
+        "duration_ms"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string"
+        },
+        "completed": {
+          "type": "boolean"
+        },
+        "two_key": {
+          "type": "boolean"
+        },
+        "hint_level_max": {
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "error_id",
+              "severity",
+              "t_ms"
+            ],
+            "properties": {
+              "error_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "severity": {
+                "enum": [
+                  "minor",
+                  "major",
+                  "critical"
+                ]
+              },
+              "t_ms": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

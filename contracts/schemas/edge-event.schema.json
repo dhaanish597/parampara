@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/edge-event.schema.json",
+  "title": "EdgeEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "step_id",
+    "rule_or_check_id",
+    "t_ms"
+  ],
+  "properties": {
+    "kind": {
+      "enum": [
+        "edge_key",
+        "risk",
+        "order_violation",
+        "hand_lost",
+        "camera_unclear"
+      ]
+    },
+    "step_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rule_or_check_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "part_id": {
+      "type": "string"
+    },
+    "zone_id": {
+      "type": "string"
+    },
+    "t_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "detail": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string",
+          "boolean"
+        ]
+      }
+    }
+  }
+}

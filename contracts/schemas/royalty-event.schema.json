@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/royalty-event.schema.json",
+  "title": "RoyaltyEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "licence_id",
+    "role",
+    "beneficiary_user_id",
+    "beneficiary_org_id",
+    "amount_paise",
+    "basis",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "licence_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role": {
+      "enum": [
+        "master",
+        "parent_master",
+        "trainee",
+        "reviewer",
+        "factory",
+        "platform"
+      ]
+    },
+    "beneficiary_user_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "beneficiary_org_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string"
+        ]
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

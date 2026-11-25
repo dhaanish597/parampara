@@ -1,0 +1,16 @@
+{
+  "status": "pass",
+  "confidence": 0.86,
+  "predicate_results": [
+    {
+      "predicate_id": "p2",
+      "pass": true,
+      "evidence": "Green wire is inside the PE terminal."
+    }
+  ],
+  "visible_issues": [],
+  "coach_hint_hi": "बहुत बढ़िया, अगला कदम।",
+  "frame_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "model": "gemini-3.5-flash",
+  "latency_ms": 1900
+}

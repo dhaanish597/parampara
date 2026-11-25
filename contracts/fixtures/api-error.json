@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "not_found",
+    "message": "Skill version not found",
+    "request_id": "req_0001"
+  }
+}

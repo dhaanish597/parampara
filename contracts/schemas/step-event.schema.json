@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parampara.app/schemas/step-event.schema.json",
+  "title": "StepEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "session_id",
+    "step_id",
+    "type",
+    "t_ms",
+    "payload"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "step_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "type": {
+      "enum": [
+        "started",
+        "hint",
+        "risk",
+        "check_requested",
+        "edge_key",
+        "vlm_key",
+        "completed",
+        "failed",
+        "question",
+        "mode_changed"
+      ]
+    },
+    "t_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "payload": {
+      "type": "object"
+    },
+    "frame_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

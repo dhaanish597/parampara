@@ -17,5 +17,5 @@ Bootstrap prompt (Antigravity): see the end of `GEMINI.md`.
 
 - Present on the key: `gemini-3.8-live`, `gemini-3.8-live-extended-thinking`, `gemini-3.1-flash-live-preview` (all `bidiGenerateContent`), `gemini-3.5-flash`, `gemini-3.5-flash-lite`.
 - TTS candidates: `gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-3.1-flash-tts-preview`. Pick one for `MODEL_TTS` and record why.
-- The key is on the **free tier** until the human enables billing for the Google project "Parampara". If Live quotas are too low, tell the human; do not work around it.
+- **Decision (human, 26 Nov): free tier only. Billing will not be enabled.** Design every spike around free-tier rate and session limits. Record the measured limits (requests per minute, concurrent Live sessions, daily caps) in `docs/research/live-api.md`, and say clearly in the handoff if a plan assumption (6-minute video session, 1 fps frames, 4 model families) does not fit. Do not work around quotas with other keys or projects.
 - The key format starts with `AQ.`, not `AIza`. Send it as the `x-goog-api-key` header or through the SDK.

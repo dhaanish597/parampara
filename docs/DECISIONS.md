@@ -57,3 +57,11 @@ Maintained by Claude Code. Other agents propose decisions in their handoffs. Eac
 ## D-010 Payouts in test mode, simulated fallback
 - **Choice:** RazorpayX test mode when available, otherwise a clearly labelled simulated provider.
 - **Reason:** no real money during judging; account activation may not be possible in time.
+
+## D-011 Gemini free tier only
+- **Context:** the human will not enable Google billing.
+- **Options:** pay for Live quotas; free tier only.
+- **Choice:** free tier only, with a scripted fallback and cached results where quotas bite.
+- **Reason:** no spend during the build; limits are measured in T-003.
+- **Consequences:** demo must be rehearsed inside quotas; eval and usage runs are batched and small.
+

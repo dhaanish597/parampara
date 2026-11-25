@@ -65,3 +65,10 @@ Maintained by Claude Code. Other agents propose decisions in their handoffs. Eac
 - **Reason:** no spend during the build; limits are measured in T-003.
 - **Consequences:** demo must be rehearsed inside quotas; eval and usage runs are batched and small.
 
+
+## D-012 Lanes: Gemini builds the backend, Claude builds the web app
+- **Context:** the human moved about 70% of the build to Gemini; batch 1 showed that agents editing the same files and skipping real behaviour checks costs more than it saves.
+- **Options:** keep the per-task owners in the plan; split by layer.
+- **Choice:** Gemini owns `services/`, `db/`, `evals/`, the pure TS modules it wrote (`lib/edge` pure files, `lib/coach/twoKey.ts`, `lib/vc/verify.ts`). Claude owns the rest of `apps/web`, contracts, deploy, reviews and merges.
+- **Reason:** no shared files between lanes, so both can run in parallel; Claude still integrates every seam.
+- **Consequences:** every Gemini route declares a Pydantic response model so the web client is generated from OpenAPI.

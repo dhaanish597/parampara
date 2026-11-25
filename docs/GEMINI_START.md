@@ -22,4 +22,4 @@ Bootstrap prompt (Antigravity): see the end of `GEMINI.md`.
 
 ## Hands-off mode
 
-For a long autonomous run (many tasks, sub-agents, TDD, verify real behaviour), paste the prompt in `docs/GEMINI_PROMPT.md`.
+Batch 1 used `docs/GEMINI_PROMPT.md`. From 26 November use `docs/GEMINI_NEXT.md` (verify, fix the review findings, then build the backend lane until blocked).

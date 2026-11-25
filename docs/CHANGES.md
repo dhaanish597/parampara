@@ -24,6 +24,46 @@ Anyone may propose. The human and Claude Code approve. After approval, Claude up
 - Decision: approved (Render free web service), by human delegation to claude, 2026-11-26. Plan text update pending. The Render service is created when T-017 adds the Dockerfile.
 - Done in: -
 
+## CR-003: give_hint level parameter must not use an integer enum
+- Raised by: claude, 2026-11-26, while reviewing T-016 (docs/audits/2026-11-26-gemini-batch-1-review.md)
+- Problem: 16.5 declares `"level": {"type": "integer", "enum": [1, 2, 3]}`. The Gemini schema only allows string enums; the SDK rejects the declaration, so the coach would get no tools.
+- Proposal: `"level": {"type": "integer", "minimum": 1, "maximum": 3}`. Checked against the live API on 2026-11-26.
+- Affected sections: 16.5   Affected tasks: T-016, T-015
+- Decision: pending human
+- Done in: -
+
+## CR-004: fresh Live token for reconnect
+- Raised by: claude, 2026-11-26, from T-003 findings
+- Problem: tokens are single use (verified: a second connect fails with "Token has been used too many times"), so 16.6's reconnect with a resumption handle has no token to use.
+- Proposal: `POST /v1/sessions/{id}/live-token` with `{resumption_handle}` returns a new single-use token whose locked config carries that handle. Trainee of that session only, rate limit 6 per minute.
+- Affected sections: 12.2, 16.2, 16.6   Affected tasks: T-016, T-015
+- Decision: pending human
+- Done in: -
+
+## CR-005: assurance, coach and edge_fps in the session summary
+- Raised by: gemini (spec gap 1), confirmed by claude, 2026-11-26
+- Problem: 16.7, 17.4, 18.1 and 18.3 require `assurance`, `coach: scripted` and `edge_fps` in the summary, but `session-summary.schema.json` has no such fields and forbids extra ones.
+- Proposal: add `assurance: "two_key" | "single" | "manual"` to `StepOutcome`; add `coach: "live" | "scripted"` and `edge_fps: number | null` to `SessionSummary`. Regenerate contracts.
+- Affected sections: 10.3, 18, 19   Affected tasks: T-020, T-030, T-037
+- Decision: pending human
+- Done in: -
+
+## CR-006: draft skill version for the interviewer
+- Raised by: gemini (spec gap 2), confirmed by claude, 2026-11-26
+- Problem: 15 runs the interview on a draft through `/skill-versions/{id}`, but 14.2 only creates a `skill_versions` row at `finalize`.
+- Proposal: when a compile run reaches `awaiting_review`, create a `skill_versions` row with status `draft` holding the draft graph; `finalize` approves that row instead of inserting a new one.
+- Affected sections: 12.2, 14.2, 15   Affected tasks: T-021, T-028
+- Decision: pending human
+- Done in: -
+
+## CR-007: idempotency_keys table
+- Raised by: gemini (spec gap 3), confirmed by claude, 2026-11-26
+- Problem: 12.1 requires stored Idempotency-Key values for money and ledger writes; 11.1 has nowhere to store them. T-010 added an `idempotency_keys` table not in the plan.
+- Proposal: keep the table in 11.1, add `request_sha256 text not null` so a reused key with a different body returns 409, and purge rows older than 24 hours.
+- Affected sections: 11.1, 12.1   Affected tasks: T-010, T-034, T-042
+- Decision: pending human
+- Done in: -
+
 ## Closed
 
 (none yet)

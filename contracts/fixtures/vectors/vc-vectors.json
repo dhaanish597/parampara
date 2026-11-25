@@ -1,0 +1,221 @@
+[
+  {
+    "name": "valid_eddsa_jcs_2022",
+    "publicKeyMultibase": "z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "vc": {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://parampara.app/contexts/skill/v1"
+      ],
+      "id": "https://parampara.app/credentials/00000000-0000-4000-8000-000000000007",
+      "type": [
+        "VerifiableCredential",
+        "ProofOfSkillCredential"
+      ],
+      "issuer": {
+        "id": "did:web:parampara.app",
+        "name": "Parampara"
+      },
+      "validFrom": "2026-11-25T10:00:00Z",
+      "credentialSubject": {
+        "id": "did:example:trainee",
+        "name": "Trainee",
+        "skill": {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "version": 1,
+          "title": {
+            "en": "3-way terminal block wiring",
+            "hi": "3-वे टर्मिनल ब्लॉक वायरिंग"
+          },
+          "domain": "electrical"
+        },
+        "master": {
+          "name": "Master",
+          "lineage": []
+        },
+        "performance": {
+          "clean_runs": 1,
+          "sessions": 1,
+          "mastery_min": 0.5,
+          "mode_of_final_run": "full",
+          "errors_in_final_run": 0
+        },
+        "evidence": {
+          "merkle_root": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "item_count": 6,
+          "algorithm": "sha256-merkle-v1"
+        },
+        "policy": {
+          "profile": "demo",
+          "min_consecutive_clean_runs": 1,
+          "mastery_threshold": 0.5,
+          "require_exam_mode": false,
+          "require_cosign": true
+        },
+        "cosigned_by": {
+          "name": "Supervisor",
+          "role": "supervisor"
+        },
+        "org": {
+          "name": "Demo Factory",
+          "city": "Chennai"
+        }
+      },
+      "proof": {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-jcs-2022",
+        "created": "2026-11-26T00:00:00Z",
+        "verificationMethod": "did:web:parampara.app#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zvZpeNrj8aWgHrMXZhSJqsbFGBMTATtqF4PtgoQoy9bSH1BWArz68Nq6PpbTJz7Zq2d5tn74J4zEGszDnSBuktyt"
+      }
+    },
+    "expected_valid": true
+  },
+  {
+    "name": "tampered_clean_runs",
+    "publicKeyMultibase": "z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "vc": {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://parampara.app/contexts/skill/v1"
+      ],
+      "id": "https://parampara.app/credentials/00000000-0000-4000-8000-000000000007",
+      "type": [
+        "VerifiableCredential",
+        "ProofOfSkillCredential"
+      ],
+      "issuer": {
+        "id": "did:web:parampara.app",
+        "name": "Parampara"
+      },
+      "validFrom": "2026-11-25T10:00:00Z",
+      "credentialSubject": {
+        "id": "did:example:trainee",
+        "name": "Trainee",
+        "skill": {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "version": 1,
+          "title": {
+            "en": "3-way terminal block wiring",
+            "hi": "3-वे टर्मिनल ब्लॉक वायरिंग"
+          },
+          "domain": "electrical"
+        },
+        "master": {
+          "name": "Master",
+          "lineage": []
+        },
+        "performance": {
+          "clean_runs": 2,
+          "sessions": 1,
+          "mastery_min": 0.5,
+          "mode_of_final_run": "full",
+          "errors_in_final_run": 0
+        },
+        "evidence": {
+          "merkle_root": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "item_count": 6,
+          "algorithm": "sha256-merkle-v1"
+        },
+        "policy": {
+          "profile": "demo",
+          "min_consecutive_clean_runs": 1,
+          "mastery_threshold": 0.5,
+          "require_exam_mode": false,
+          "require_cosign": true
+        },
+        "cosigned_by": {
+          "name": "Supervisor",
+          "role": "supervisor"
+        },
+        "org": {
+          "name": "Demo Factory",
+          "city": "Chennai"
+        }
+      },
+      "proof": {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-jcs-2022",
+        "created": "2026-11-26T00:00:00Z",
+        "verificationMethod": "did:web:parampara.app#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zvZpeNrj8aWgHrMXZhSJqsbFGBMTATtqF4PtgoQoy9bSH1BWArz68Nq6PpbTJz7Zq2d5tn74J4zEGszDnSBuktyt"
+      }
+    },
+    "expected_valid": false
+  },
+  {
+    "name": "wrong_public_key",
+    "publicKeyMultibase": "z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+    "vc": {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://parampara.app/contexts/skill/v1"
+      ],
+      "id": "https://parampara.app/credentials/00000000-0000-4000-8000-000000000007",
+      "type": [
+        "VerifiableCredential",
+        "ProofOfSkillCredential"
+      ],
+      "issuer": {
+        "id": "did:web:parampara.app",
+        "name": "Parampara"
+      },
+      "validFrom": "2026-11-25T10:00:00Z",
+      "credentialSubject": {
+        "id": "did:example:trainee",
+        "name": "Trainee",
+        "skill": {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "version": 1,
+          "title": {
+            "en": "3-way terminal block wiring",
+            "hi": "3-वे टर्मिनल ब्लॉक वायरिंग"
+          },
+          "domain": "electrical"
+        },
+        "master": {
+          "name": "Master",
+          "lineage": []
+        },
+        "performance": {
+          "clean_runs": 1,
+          "sessions": 1,
+          "mastery_min": 0.5,
+          "mode_of_final_run": "full",
+          "errors_in_final_run": 0
+        },
+        "evidence": {
+          "merkle_root": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "item_count": 6,
+          "algorithm": "sha256-merkle-v1"
+        },
+        "policy": {
+          "profile": "demo",
+          "min_consecutive_clean_runs": 1,
+          "mastery_threshold": 0.5,
+          "require_exam_mode": false,
+          "require_cosign": true
+        },
+        "cosigned_by": {
+          "name": "Supervisor",
+          "role": "supervisor"
+        },
+        "org": {
+          "name": "Demo Factory",
+          "city": "Chennai"
+        }
+      },
+      "proof": {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-jcs-2022",
+        "created": "2026-11-26T00:00:00Z",
+        "verificationMethod": "did:web:parampara.app#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zvZpeNrj8aWgHrMXZhSJqsbFGBMTATtqF4PtgoQoy9bSH1BWArz68Nq6PpbTJz7Zq2d5tn74J4zEGszDnSBuktyt"
+      }
+    },
+    "expected_valid": false
+  }
+]

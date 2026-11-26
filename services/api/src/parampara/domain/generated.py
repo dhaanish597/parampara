@@ -527,6 +527,20 @@ class Upload(BaseModel):
     signed_url: str
 
 
+class Coach(Enum):
+    live = "live"
+    scripted = "scripted"
+
+
+class EdgeFps(RootModel[float]):
+    root: Annotated[
+        float,
+        Field(
+            description="Median edge engine frames per second, null if not measured (17.4).", ge=0.0
+        ),
+    ]
+
+
 class MasteryItem(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -589,6 +603,13 @@ class StepEvent(BaseModel):
     type: Type
 
 
+class Assurance(Enum):
+    two_key = "two_key"
+    single = "single"
+    manual = "manual"
+    none = "none"
+
+
 class Severity2(Enum):
     minor = "minor"
     major = "major"
@@ -615,6 +636,10 @@ class StepOutcome(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    assurance: Annotated[
+        Assurance,
+        Field(description="How the step completed (18.1, 18.3); none if it did not complete."),
+    ]
     completed: bool
     duration_ms: Annotated[int, Field(ge=0)]
     errors: list[Error1]
@@ -794,7 +819,15 @@ class SessionSummary(BaseModel):
         extra="forbid",
     )
     clean_run: bool
+    coach: Annotated[
+        Coach,
+        Field(description="Scripted when Live failed twice and the app read steps locally (16.7)."),
+    ]
     credential_eligible: bool
+    edge_fps: Annotated[
+        EdgeFps | None,
+        Field(description="Median edge engine frames per second, null if not measured (17.4)."),
+    ]
     mastery: list[MasteryItem]
     mode: str
     next_mode: str

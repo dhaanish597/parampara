@@ -1,6 +1,6 @@
 # Parampara: Build Plan and Source of Truth
 
-**Version:** 1.0 (25 November 2026, 23:00 IST)
+**Version:** 1.1 (26 November 2026, 14:00 IST). Change log in section 37.
 **Status:** Approved for build. Changes only through a Change Request (section 31.9).
 **Product:** Parampara, entry for BUILD 2036, Frontier 04 Manufacturing Renaissance.
 **Submission deadline (working assumption):** 30 November 2026, 12:00 IST. Confirm with the organisers.
@@ -238,7 +238,7 @@ flowchart TB
   LIVECLIENT <-->|WebSocket, short-lived token| LIVE[Gemini Live API: gemini-3.8-live]
   FSM -->|HTTPS JSON| API
   BLUR -->|signed upload| STORE[(Supabase Storage)]
-  subgraph Backend["Backend (FastAPI on Cloud Run, asia-south1)"]
+  subgraph Backend["Backend (FastAPI on Render, one container with the worker)"]
     API[REST API /v1] --> ORCH[Orchestrator and job worker]
     ORCH --> COMPILER[Skill Compiler graph]
     ORCH --> REFINERY[Data refinery]
@@ -419,7 +419,7 @@ Pin exact versions on day 1 in lockfiles. Where this table says "current", the o
 | Crypto | `pynacl` (Ed25519), `rfc8785` (JCS), `base58` | |
 | Observability | Langfuse cloud, Python SDK | plus local `model_calls` table |
 | DB and storage | Supabase (Postgres 15+, pgvector, Storage, Auth with anonymous sign-in), region ap-south-1 Mumbai | |
-| Hosting | Vercel (web), Google Cloud Run asia-south1 (API and worker) | |
+| Hosting | Vercel (web), Render free web service (API and worker in one Docker container) | CR-001: no Google billing. Free Render services sleep after 15 minutes idle, so warm it up before the demo |
 | Payouts | RazorpayX Payouts API, test mode; `simulated` fallback | |
 | Codegen | `datamodel-code-generator` (Python), `json-schema-to-typescript` (TS), `openapi-typescript` (API client) | |
 
@@ -440,15 +440,15 @@ Never hard-code a model string outside `services/api/src/parampara/api/settings.
 
 ### 9.1 Accounts to create (task T-000, human)
 
-Google AI Studio API key (paid tier, so Live API quotas are usable), Google Cloud project with Cloud Run and Secret Manager, Supabase project in ap-south-1, Vercel account linked to GitHub, Langfuse cloud project, RazorpayX account in test mode (if activation is blocked, use the `simulated` provider and say so in the UI), GitHub repository `parampara` (public at submission).
+Google AI Studio API key (free tier only, D-011), Render account (API host, CR-001), Supabase project in ap-south-1, Vercel account linked to GitHub, Langfuse cloud project, RazorpayX account in test mode (if activation is blocked, use the `simulated` provider and say so in the UI), GitHub repository `parampara` (public at submission).
 
 ### 9.2 Environments
 
 | Env | Web | API | DB |
 | --- | --- | --- | --- |
 | local | `pnpm dev` on https via `next dev --experimental-https` | `uv run uvicorn` | `supabase start` (Docker) |
-| staging | Vercel preview | Cloud Run service `parampara-api-staging` | Supabase project (same project, `staging` schema not needed; one project is fine) |
-| production (demo) | Vercel production domain | Cloud Run `parampara-api` | Supabase project |
+| staging | Vercel preview | Render service `parampara-api-staging` | Supabase project (same project, `staging` schema not needed; one project is fine) |
+| production (demo) | Vercel production domain | Render service `parampara-api` | Supabase project |
 
 Phones need HTTPS for camera access. For phone testing during development use the Vercel preview or a Cloudflare tunnel to the local server.
 
@@ -671,7 +671,7 @@ This schema is also the `response_schema` for the compiler's assemble step, so k
 }
 ```
 
-**Semantic rules the deterministic linter enforces (section 14.6):** step `order` values are 1..n with no gaps; every `part_id` and `zone_id` referenced exists; every `critical` step has at least one `edge_checks` entry or the linter reports `critical_step_without_edge_check`; every hazard's `step_id` exists; `wrong_part_near_zone` rules name a `part_id` and `forbidden_zone_id`; `source_segment.end_ms > start_ms`; no two steps share a segment; Hindi strings contain Devanagari characters or are approved Hinglish (at least one Devanagari character in `instruction.hi`).
+**Semantic rules the deterministic linter enforces (section 14.6):** step `order` values are 1..n with no gaps; every `part_id` and `zone_id` referenced exists; every `critical` step has at least one `edge_checks` entry or the linter reports `critical_step_without_edge_check`; every step has at least one `edge_checks` entry or the linter reports `step_without_edge_check` (CR-009: a step without one could never complete under the two-key rule); every hazard's `step_id` exists; `wrong_part_near_zone` rules name a `part_id` and `forbidden_zone_id`; `source_segment.end_ms > start_ms`; no two steps share a segment; Hindi strings contain Devanagari characters or are approved Hinglish (at least one Devanagari character in `instruction.hi`).
 
 Production policy default: `{profile: production, min_consecutive_clean_runs: 3, mastery_threshold: 0.95, require_exam_mode: true, require_cosign: true}`. The demo org uses `{profile: demo, min_consecutive_clean_runs: 1, mastery_threshold: 0.5, require_exam_mode: false, require_cosign: true}`. The credential always records which policy applied.
 
@@ -711,8 +711,8 @@ interface SessionStartResponse {
 }
 
 // session-summary.schema.json
-interface StepOutcome { step_id: string; completed: boolean; two_key: boolean; hint_level_max: 0 | 1 | 2 | 3; errors: { error_id: string | null; severity: "minor" | "major" | "critical"; t_ms: number }[]; duration_ms: number }
-interface SessionSummary { session_id: string; status: "completed" | "aborted"; mode: string; steps: StepOutcome[]; clean_run: boolean; total_ms: number; mastery: { step_id: string; p_learned: number }[]; next_mode: string; credential_eligible: boolean; policy: CredentialPolicy }
+interface StepOutcome { step_id: string; completed: boolean; two_key: boolean; assurance: "two_key" | "single" | "manual" | "none"; hint_level_max: 0 | 1 | 2 | 3; errors: { error_id: string | null; severity: "minor" | "major" | "critical"; t_ms: number }[]; duration_ms: number }
+interface SessionSummary { session_id: string; status: "completed" | "aborted"; mode: string; steps: StepOutcome[]; clean_run: boolean; total_ms: number; mastery: { step_id: string; p_learned: number }[]; next_mode: string; credential_eligible: boolean; policy: CredentialPolicy; coach: "live" | "scripted"; edge_fps: number | null }
 
 // consent-request.schema.json and consent-record.schema.json
 type Scope = "train_own_org" | "train_other_employers" | "robotics_research" | "robotics_commercial";
@@ -992,6 +992,15 @@ create table trace_events (
 );
 create index on trace_events (session_id, id);
 create index on trace_events (compile_run_id, id);
+
+-- CR-007: stored Idempotency-Key values for money and ledger writes (12.1). Purged after 24 hours.
+create table idempotency_keys (
+  key text not null, route text not null,
+  user_id uuid not null references profiles(id),
+  request_sha256 text not null, response jsonb not null,
+  created_at timestamptz not null default now(),
+  primary key (key, route, user_id)
+);
 ```
 
 ### 11.2 Row-level security (`0002_rls.sql`)
@@ -1069,6 +1078,7 @@ FastAPI app at `services/api/src/parampara/api`. Base path `/v1`. JSON in and ou
 | `POST /v1/skill-versions/{id}/interview` | master | | `{ephemeral_token, model, config, expires_at}` | Live session for the tacit interviewer |
 | `POST /v1/skill-versions/{id}/tips` | master | `{step_id, text: LocalizedText}` | updated draft | Relay for the interviewer's `save_tip` tool |
 | `POST /v1/sessions` | trainee | `SessionStartRequest` | `SessionStartResponse` | Picks mode (section 19), builds the system instruction, mints the Live token |
+| `POST /v1/sessions/{id}/live-token` | trainee of the session | `{resumption_handle}` | `{ephemeral_token, model, expires_at}` | CR-004: fresh single-use token carrying the handle, for reconnects. 6 per minute |
 | `POST /v1/sessions/{id}/calibration` | trainee | `Calibration` | ok | |
 | `POST /v1/sessions/{id}/events` | trainee | `{events: StepEvent[]}` | `{accepted}` | Batched every 2 s and on completion |
 | `POST /v1/sessions/{id}/verify` | trainee | `VerifyRequest` | `VerifierVerdict` | Stores the frame, calls the verifier (section 18) |
@@ -1122,7 +1132,7 @@ async def generate(
 
 Behaviour:
 
-1. **Routing.** `purpose -> model`: `video_understanding`, `verify`, `reasoning` use `MODEL_FLASH`; `text_small` uses `MODEL_LITE`; `tts` uses `MODEL_TTS`.
+1. **Routing.** `purpose -> model`: `video_understanding` and `reasoning` use `MODEL_FLASH`; `verify` tries `MODEL_FLASH` and, on 429, 503 or no answer within 4 s, falls back to `MODEL_LITE` inside one overall 8 s deadline (CR-008), recording the model that answered; `text_small` uses `MODEL_LITE`; `tts` uses `MODEL_TTS`.
 2. **Structured output.** When `response_schema` is given, request JSON with that schema, then validate with Pydantic. On validation failure, retry once with the validation error appended as a user message. A second failure raises `SchemaViolation`.
 3. **Retries.** Retry on 429, 500, 503 and timeouts with jittered backoff (1 s, 3 s). Never retry on 400.
 4. **Timeouts.** Default 30 s. The verifier uses 8 s.
@@ -1189,8 +1199,8 @@ flowchart LR
 | `critic` | LLM | Critic prompt (14.5). Pass or a list of fixes. |
 | `revise` | LLM | Re-run the predicate writer only for steps named in lint or critic issues, with the issues attached. Increments `revision`. |
 | `sop` | LLM (`MODEL_LITE`) | SOP writer prompt (14.7) fills any missing Hindi and produces the bilingual skill card in `summary`. |
-| `review` | interrupt | LangGraph `interrupt()`; status `awaiting_review`. The supervisor edits through `PATCH /draft` (lint runs on every edit) and approves. |
-| `finalize` | deterministic | Create `skill_versions` row (version = max + 1, author = master, parent if forked), compute `graph_sha256`, set status `approved`, enqueue `tts_hazards`. |
+| `review` | interrupt | LangGraph `interrupt()`; status `awaiting_review`; creates a `skill_versions` row with status `draft` holding the draft graph, so the interviewer can use `/skill-versions/{id}` (CR-006). The supervisor edits through `PATCH /draft` (lint runs on every edit) and approves. |
+| `finalize` | deterministic | Approve the draft `skill_versions` row (version = max + 1, author = master, parent if forked), compute `graph_sha256`, set status `approved`, enqueue `tts_hazards`. |
 
 Checkpointer: `PostgresSaver` on `DATABASE_URL`, thread id = `compile_run_id`. Every node writes `trace_events` (`agent_start`, `tool_call`, `verdict`, `agent_end`). Hard cap: 25 node executions per run.
 
@@ -1290,7 +1300,7 @@ JSON: {"pass": bool, "issues": [{"path": str, "severity": "minor"|"major", "fix"
 
 ### 14.6 Deterministic linter (`tools/skill_lint.py`)
 
-Implements the semantic rules in 10.2 and returns `LintIssue{path, code, message}`. Codes: `order_gap`, `unknown_part`, `unknown_zone`, `critical_step_without_edge_check`, `hazard_unknown_step`, `rule_missing_fields`, `segment_invalid`, `segment_overlap`, `missing_hindi`, `too_many_steps`. Pure function, 100% branch coverage in tests.
+Implements the semantic rules in 10.2 and returns `LintIssue{path, code, message}`. Codes: `order_gap`, `unknown_part`, `unknown_zone`, `critical_step_without_edge_check`, `hazard_unknown_step`, `rule_missing_fields`, `segment_invalid`, `segment_overlap`, `missing_hindi`, `too_many_steps`, `step_without_edge_check` (CR-009). Pure function, 100% branch coverage in tests.
 
 ### 14.7 SOP writer prompt (`prompts/sop_writer.md`)
 
@@ -1447,7 +1457,7 @@ Begin: greet {trainee_name} in one sentence and ask them to start step 1.
       "properties": { "step_id": { "type": "string" }, "hazard_id": { "type": "string" }, "description": { "type": "string" } } } },
   { "name": "give_hint", "description": "Fetch the master's own words for a step. Level 1 is the title, 2 is the instruction, 3 is the master's tip.",
     "parameters": { "type": "object", "required": ["step_id", "level"],
-      "properties": { "step_id": { "type": "string" }, "level": { "type": "integer", "enum": [1, 2, 3] } } } },
+      "properties": { "step_id": { "type": "string" }, "level": { "type": "integer", "minimum": 1, "maximum": 3 } } } },
   { "name": "log_question", "description": "Record a question the trainee asked and whether a tip answered it.",
     "parameters": { "type": "object", "required": ["question"],
       "properties": { "question": { "type": "string" }, "tip_id": { "type": "string" } } } }
@@ -1470,7 +1480,7 @@ Begin: greet {trainee_name} in one sentence and ask them to start step 1.
 
 | File | Responsibility |
 | --- | --- |
-| `client.ts` | Connect with `@google/genai` using the ephemeral token; handle `setupComplete`, `serverContent`, `toolCall`, `goAway`, `sessionResumptionUpdate`, close and error; reconnect with the latest handle up to 3 times. |
+| `client.ts` | Connect with `@google/genai` using the ephemeral token; handle `setupComplete`, `serverContent`, `toolCall`, `goAway`, `sessionResumptionUpdate`, close and error; reconnect with the latest handle up to 3 times, each with a fresh token from `POST /v1/sessions/{id}/live-token` (tokens are single use, CR-004). |
 | `mic.ts` | AudioWorklet capture, resample to 16 kHz mono PCM16, send as `audio/pcm;rate=16000` every 100 ms. |
 | `speaker.ts` | Queue and play 24 kHz PCM16 from the model; flush on `interrupted`; duck (pause) while a local hazard clip plays. |
 | `frames.ts` | Draw the video element to a 768 by 768 canvas (letterboxed), JPEG quality 0.7, send at 1 fps while state is `COACHING`. |
@@ -2023,10 +2033,10 @@ The report states the dataset size, who recorded it, and its limits (one skill, 
 - `/.well-known/did.json` and `/contexts/skill/v1.jsonld` served by Next.js routes.
 - Production domain set before any credential is issued, because the issuer DID contains it. Do not change the domain after 30 November.
 
-### 30.2 API and worker (Cloud Run, asia-south1)
+### 30.2 API and worker (Render, CR-001)
 
 - `services/api/Dockerfile`: Python 3.12 slim, ffmpeg, the uv-locked environment, `CMD` starts Uvicorn and the worker in one process group (`parampara.api.main:app` with a startup task that runs the worker loop).
-- Deploy: `gcloud run deploy parampara-api --source services/api --region asia-south1 --no-cpu-throttling --min-instances 1 --max-instances 3 --memory 2Gi --cpu 2 --set-secrets ...`.
+- Deploy: Render free web service built from `services/api/Dockerfile` on pushes to `main`; secrets in Render's environment settings, never in the repo. It sleeps after 15 idle minutes: ping `/v1/health` before every demo.
 - Health check: `GET /v1/health`. Uptime monitor every 5 minutes from 30 November to 15 December.
 
 ### 30.3 Database
@@ -2638,3 +2648,4 @@ Cut in this order and record each cut in DECISIONS.md: T-028 interviewer, T-037 
 | Version | Date | Change |
 | --- | --- | --- |
 | 1.0 | 25 Nov 2026 | First approved version |
+| 1.1 | 26 Nov 2026 | CR-001 Render instead of Cloud Run; D-011 free tier; CR-003 give_hint schema; CR-004 Live reconnect token; CR-005 assurance, coach, edge_fps in the summary; CR-006 draft skill version for the interviewer; CR-007 idempotency_keys; CR-008 verifier model fallback; CR-009 every step needs an edge check |

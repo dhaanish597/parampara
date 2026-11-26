@@ -9,7 +9,8 @@
       "two_key": true,
       "hint_level_max": 0,
       "errors": [],
-      "duration_ms": 18000
+      "duration_ms": 18000,
+      "assurance": "two_key"
     }
   ],
   "clean_run": true,
@@ -28,5 +29,7 @@
     "mastery_threshold": 0.5,
     "require_exam_mode": false,
     "require_cosign": true
-  }
+  },
+  "coach": "live",
+  "edge_fps": 14.5
 }

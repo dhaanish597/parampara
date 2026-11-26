@@ -522,7 +522,15 @@ signed_url: string
  */
 export interface SessionSummary {
 clean_run: boolean
+/**
+ * Scripted when Live failed twice and the app read steps locally (16.7).
+ */
+coach: ("live" | "scripted")
 credential_eligible: boolean
+/**
+ * Median edge engine frames per second, null if not measured (17.4).
+ */
+edge_fps: (number | null)
 mastery: {
 p_learned: number
 step_id: string
@@ -540,6 +548,10 @@ total_ms: number
  * via the `definition` "StepOutcome".
  */
 export interface StepOutcome {
+/**
+ * How the step completed (18.1, 18.3); none if it did not complete.
+ */
+assurance: ("two_key" | "single" | "manual" | "none")
 completed: boolean
 duration_ms: number
 errors: {

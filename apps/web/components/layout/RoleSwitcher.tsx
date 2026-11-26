@@ -15,7 +15,7 @@ export function RoleSwitcher() {
         {roles.map((role) => (
           <label
             key={role}
-            className="flex min-h-touch cursor-pointer items-center rounded-xl border border-line bg-surface px-4 text-ink hover:bg-canvas has-checked:border-accent has-checked:bg-accent has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent"
+            className="flex min-h-touch cursor-pointer items-center rounded-xl border border-line bg-surface px-4 text-ink hover:not-has-checked:bg-canvas has-checked:border-accent has-checked:bg-accent has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent"
           >
             <input
               type="radio"

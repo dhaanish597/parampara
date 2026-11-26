@@ -85,7 +85,7 @@ Anyone may propose. The human and Claude Code approve. After approval, Claude up
 - Problem: the typed API client needs types generated from the API's OpenAPI document. They are generated output, but `scripts/gen_contracts.sh --check` diffs all of `packages/contracts/src/generated/` and `scripts/size_check.py` only skips listed generated paths, so the 1,000-line file fails one gate or the other.
 - Proposal: generate them into `packages/contracts/src/openapi/paths.d.ts` (`pnpm --filter @parampara/web gen:api`) and add that folder to the size check's and eslint's generated-path lists. No threshold changes.
 - Affected sections: 7, 31.8   Affected tasks: T-012
-- Decision: pending human (done on the T-012 branch so the gate passes; revert if rejected)
+- Decision: approved by the human, 2026-11-26
 - Done in: T-012 PR
 
 ## Closed

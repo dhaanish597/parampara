@@ -326,6 +326,7 @@ parampara/
     README.md
   packages/
     contracts/                   generated TypeScript types (never hand-edit)
+      src/openapi/paths.d.ts     API types generated from the OpenAPI document (`gen:api`, CR-010)
   apps/
     web/                         Next.js PWA
       app/                       routes (section 25)
@@ -2648,4 +2649,4 @@ Cut in this order and record each cut in DECISIONS.md: T-028 interviewer, T-037 
 | Version | Date | Change |
 | --- | --- | --- |
 | 1.0 | 25 Nov 2026 | First approved version |
-| 1.1 | 26 Nov 2026 | CR-001 Render instead of Cloud Run; D-011 free tier; CR-003 give_hint schema; CR-004 Live reconnect token; CR-005 assurance, coach, edge_fps in the summary; CR-006 draft skill version for the interviewer; CR-007 idempotency_keys; CR-008 verifier model fallback; CR-009 every step needs an edge check |
+| 1.1 | 26 Nov 2026 | CR-001 Render instead of Cloud Run; D-011 free tier; CR-003 give_hint schema; CR-004 Live reconnect token; CR-005 assurance, coach, edge_fps in the summary; CR-006 draft skill version for the interviewer; CR-007 idempotency_keys; CR-008 verifier model fallback; CR-009 every step needs an edge check; CR-010 generated OpenAPI types folder |

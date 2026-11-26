@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from parampara.api.errors import register_error_handlers
 from parampara.api.routes import (
     auth,
+    clips,
     consents,
     health,
     licences,
@@ -67,6 +68,7 @@ def create_app() -> FastAPI:
     register_error_handlers(app)
     app.include_router(health.router)
     app.include_router(auth.router)
+    app.include_router(clips.router)
     app.include_router(skill_versions.router)
     app.include_router(traces.router)
     app.include_router(consents.router)

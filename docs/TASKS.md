@@ -7,13 +7,13 @@ Lanes from 26 November (D-012): Gemini builds the backend, data and evals; Claud
 | ID | Task | Owner | Reviewer | Depends on | Day | Status | PR |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-000 | Accounts, registration, organiser email | Human | - | none | Day 0 (25 November) | todo |  |
-| T-001 | Repository scaffold | Claude | Codex | T-000 | Day 0 (25 November) | in_review |  |
-| T-002 | Contracts v1 and codegen | Claude | Gemini | T-001 | Day 0 (25 November) | in_review |  |
+| T-001 | Repository scaffold | Claude | Codex | T-000 | Day 0 (25 November) | done |  |
+| T-002 | Contracts v1 and codegen | Claude | Gemini | T-001 | Day 0 (25 November) | done |  |
 | T-003 | Live API and TTS spike | Gemini | Claude | T-000 | Day 0 (25 November) | changes |  |
 | T-004 | Record the master demo and practice clips | Human | - | kit delivered | Day 0 (25 November) | todo |  |
 | T-010 | Database migrations, RLS, minimal seed | Gemini | Claude | T-002 | Day 1 (26 November) | changes |  |
 | T-011 | API skeleton, exemplars, LLM gateway, telemetry | Gemini | Claude | T-002, T-010 | Day 1 (26 November) | changes |  |
-| T-012 | Web skeleton, design system, auth | Claude | Gemini | T-002 | Day 1 (26 November) | todo |  |
+| T-012 | Web skeleton, design system, auth | Claude | Gemini | T-002 | Day 1 (26 November) | in_review | https://github.com/dhaanish597/parampara/pull/1 |
 | T-013 | Edge engine pure modules | Gemini | Claude | T-002 | Day 1 (26 November) | changes |  |
 | T-014 | Edge engine browser modules and calibration UI | Claude | Gemini | T-012, T-013 | Day 1 (26 November) | todo |  |
 | T-015 | Live client, coach state machine, coach page | Claude | Gemini | T-003, T-014, T-016 | Day 1 (26 November) | todo |  |

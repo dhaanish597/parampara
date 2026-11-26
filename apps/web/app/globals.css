@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* Design tokens, BUILD_PLAN 25.1: neutral greys, one deep indigo accent,
+   status green, amber and red. Red is reserved for "Ruko" and failed checks. */
+@theme {
+  --font-sans: var(--font-inter), var(--font-devanagari), ui-sans-serif, system-ui, sans-serif;
+  --font-hindi: var(--font-devanagari), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --color-ink: #111827;
+  --color-ink-soft: #4b5563;
+  --color-line: #e5e7eb;
+  --color-surface: #ffffff;
+  --color-canvas: #f6f7f9;
+
+  --color-accent: #3730a3;
+  --color-accent-strong: #312e81;
+  --color-accent-soft: #e0e7ff;
+
+  --color-ok: #15803d;
+  --color-ok-soft: #dcfce7;
+  --color-warn: #b45309;
+  --color-warn-soft: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
+
+  --text-base: 1rem;
+  --text-hindi: 1.0625rem;
+  --text-h2: 1.25rem;
+  --text-h1: 1.5rem;
+
+  --spacing-touch: 3rem;
+}
+
+html {
+  font-size: 16px;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+html[lang="hi"] body {
+  font-family: var(--font-hindi);
+  font-size: var(--text-hindi);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-pulse {
+    animation: none;
+  }
+}

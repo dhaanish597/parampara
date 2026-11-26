@@ -11,6 +11,7 @@ MAX_FUNC_LINES = 40
 SOURCE_SUFFIXES = {".py", ".ts", ".tsx", ".sql"}
 EXCLUDED = (
     "packages/contracts/src/generated/",
+    "packages/contracts/src/openapi/",  # generated from the API OpenAPI document (CR-010)
     "services/api/src/parampara/domain/generated.py",
     "contracts/fixtures/",
     "db/seed/",

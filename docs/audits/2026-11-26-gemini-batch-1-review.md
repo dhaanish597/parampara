@@ -100,3 +100,25 @@ Most of the backend is a demo shell around correct pure functions. Sessions, mas
 5. **CR-007** Record the `idempotency_keys` table in 11.1 and add a request hash column.
 6. Royalty with zero trainees: where does the 40% trainee pool go? Proposal: to the master. Needs a DECISIONS entry.
 7. Verifier latency on the free tier (11.1 s measured once): measure properly first; if over budget, choose between a lighter model, a larger two-key window, or both.
+
+## Addendum: verification of batch 2 Phases 0 and 1 (2026-11-26, Claude)
+
+Verified on the restacked tip, with real local Supabase (CLI 3.4.0 on Colima, real pgvector, real GoTrue ES256 tokens, real PostgREST) and real free-tier Gemini.
+
+| Item | Result |
+| --- | --- |
+| `make check` on all 12 branches | PASS on every branch, before and after Claude's corrections. |
+| P0-1 auth | Fixed. `alg: none`, wrong-secret HS256 and `demo:` tokens get 401; a real anonymous Supabase token gets `/v1/me` with no memberships until `demo/join`, which persists them in Postgres. |
+| P0-2 Live token | Fixed. A token from `POST /v1/sessions` made the coach call `get_current_step` at 2.7 s and then speak the step 1 instruction in Hindi. |
+| P0-3 gateway | 400 fixed. But a real verify through the API still came back `unavailable`: timeout at 8 s, and `gemini-3.5-flash` returned 503 on 9 of 9 calls; flash-lite answered 3 of 3 in 1.5 to 3.7 s. CR-008 proposes a fallback. |
+| P0-4 two-key | Fixed for client `completed` and `vlm_key` events and repeated `/complete`. Two mistakes corrected by Claude (below). |
+| P0-5, P0-6 | Fixed. Anon and user JWTs get 42501 on `v_earnings` through real PostgREST. |
+| P0-7 consent ownership | Fixed. User B gets 403 on user A's clip. Consent on a session created by the API returns 404 because sessions are not persisted yet (Phase 2). |
+| P0-8 issuer seed | Fixed. |
+
+**Corrections Claude made** (fixup commits squashed into the owning task commits; all branches re-checked):
+1. `db/reset.sh` failed on real Supabase (`permission denied for schema auth`); it had only run on emulated Postgres. It now detects real Supabase and never replaces `auth.uid()`. `supabase/config.jsonc`: anonymous sign-in on (needed for "Try as judge"), project id `parampara`. (T-010)
+2. A step with no edge checks completed on the VLM verdict alone; now a step needs both keys (CR-009 adds the lint). (T-016)
+3. Aborted sessions no longer updated mastery; 19.1 says completed and aborted sessions both observe reached steps. Aborted sessions are still not runs. (T-016)
+4. `effective_scopes` let callers skip the owner check; `owner_user_id` is now required. (T-034)
+5. JWT audience was not checked; now `aud` must be `authenticated`. (T-011)

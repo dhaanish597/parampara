@@ -64,6 +64,22 @@ Anyone may propose. The human and Claude Code approve. After approval, Claude up
 - Decision: pending human
 - Done in: -
 
+## CR-008: verifier falls back from MODEL_FLASH to MODEL_LITE inside one 8 s deadline
+- Raised by: claude, 2026-11-26, while verifying Gemini batch 2
+- Problem: 13.1 routes `verify` to `MODEL_FLASH`. On the free tier (D-011), measured 2026-11-26: one real verify through the API timed out at 8 s (10.4 s wall); in a run of 9 calls `gemini-3.5-flash` returned 503 "high demand" on all 9; `gemini-3.5-flash-lite` answered 3 of 3 in 1.5 to 3.7 s with a valid verdict. With flash alone the VLM key almost never arrives, so no step can complete.
+- Proposal: `verify` tries `MODEL_FLASH` first; on 429, 503 or no answer by 4 s it calls `MODEL_LITE` with the remaining budget; one overall deadline of 8 s; `VerifierVerdict.model` records the model that answered. The eval report (29.3) reports accuracy per model.
+- Affected sections: 13.1, 18.3   Affected tasks: T-020, T-047
+- Decision: pending human
+- Done in: -
+
+## CR-009: every step needs at least one edge check
+- Raised by: claude, 2026-11-26, while verifying Gemini batch 2
+- Problem: 10.2 only requires edge checks on critical steps, but the two-key rule (18.1) means a step with no edge check can never complete, and completing it on the VLM key alone breaks the rule that no LLM output alone completes a step.
+- Proposal: `skill_lint` reports `step_without_edge_check` for any step with an empty `edge_checks`; the predicate writer prompt already adds `hands_settled` in that case (14.4 task 2). The terminal-wiring fixture already complies.
+- Affected sections: 10.2, 14.6   Affected tasks: T-022, T-021
+- Decision: pending human
+- Done in: -
+
 ## Closed
 
 (none yet)

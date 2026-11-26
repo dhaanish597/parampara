@@ -2,7 +2,7 @@
 
 Edited only on `main` by the human or Claude Code. Agents report progress in `docs/handoffs/T-xxx.md` and in their PRs, never here.
 Statuses: `todo`, `ready`, `in_progress`, `in_review`, `changes`, `blocked`, `done`, `cut`. Task details and acceptance criteria are in `docs/BUILD_PLAN.md` section 32.
-Lanes from 26 November (D-012): Gemini builds the backend, data and evals; Claude builds the web app, deploys, reviews and merges. Batch 1 review: `docs/audits/2026-11-26-gemini-batch-1-review.md`.
+Lanes from 26 November night (D-013, replaces D-012): Gemini builds all remaining application code, whatever the Owner column says; Claude keeps T-017, T-049, T-051, T-053, reviews, merges and pushes. Prompt: `docs/GEMINI_FINISH.md`. Batch 1 review: `docs/audits/2026-11-26-gemini-batch-1-review.md`.
 
 | ID | Task | Owner | Reviewer | Depends on | Day | Status | PR |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -22,7 +22,7 @@ Lanes from 26 November (D-012): Gemini builds the backend, data and evals; Claud
 | T-020 | Verifier and two-key logic | Gemini (API, two-key); Claude (evidence UI) | Claude | T-011, T-015 | Day 2 (27 November) | changes |  |
 | T-021 | Skill Compiler graph | Gemini | Claude | T-011, T-022, T-023 | Day 2 (27 November) | todo |  |
 | T-022 | Compiler deterministic tools | Gemini | Claude | T-002 | Day 2 (27 November) | changes |  |
-| T-023 | Clip pipeline and job worker | Gemini | Claude | T-010, T-011 | Day 2 (27 November) | todo |  |
+| T-023 | Clip pipeline and job worker | Gemini | Claude | T-010, T-011 | Day 2 (27 November) | changes |  |
 | T-024 | Capture and Review pages | Claude | Gemini | T-021, T-025 | Day 2 (27 November) | todo |  |
 | T-025 | Face blur and canvas recorder | Claude | Gemini | T-014 | Day 2 (27 November) | todo |  |
 | T-026 | Prompt tuning on real clips | Gemini | Claude | T-021, T-004 | Day 2 (27 November) | todo |  |

@@ -72,3 +72,10 @@ Maintained by Claude Code. Other agents propose decisions in their handoffs. Eac
 - **Choice:** Gemini owns `services/`, `db/`, `evals/`, the pure TS modules it wrote (`lib/edge` pure files, `lib/coach/twoKey.ts`, `lib/vc/verify.ts`). Claude owns the rest of `apps/web`, contracts, deploy, reviews and merges.
 - **Reason:** no shared files between lanes, so both can run in parallel; Claude still integrates every seam.
 - **Consequences:** every Gemini route declares a Pydantic response model so the web client is generated from OpenAPI.
+
+## D-013 Gemini builds all remaining application code
+- **Context:** the human wants token-heavy work on Gemini; Claude keeps the high-risk seams of delivery. Replaces the D-012 split.
+- **Options:** keep web with Claude; move web to Gemini.
+- **Choice:** Gemini builds backend, web, evals and local e2e. Claude does deploys, CI, reviews, merges, pushes, decisions and T-051. Gemini may implement additive contract changes ahead of approval, in separate commits.
+- **Reason:** cost, and Gemini never has to wait.
+- **Consequences:** critical-path web code needs careful review; prompt in `docs/GEMINI_FINISH.md`.

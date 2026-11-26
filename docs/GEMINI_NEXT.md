@@ -1,5 +1,26 @@
 # Gemini: batch 2 hands-off prompt (verify, fix, then build the backend until blocked)
 
+## Continue batch 2 (paste this after Phases 0 and 1 are done)
+
+```text
+Continue batch 2 from Phase 2. Every rule in the batch 2 prompt (docs/GEMINI_NEXT.md on main, the block further down) still applies: lanes, sub-agent TDD, real verification, definition of done, blockers.
+
+What changed since your Phase 1 report (read before doing anything):
+1. Claude verified Phases 0 and 1 on real local Supabase and real Gemini. Read the addendum at the end of docs/audits/2026-11-26-gemini-batch-1-review.md on main (`git show main:docs/audits/2026-11-26-gemini-batch-1-review.md`). Seven P0s hold; the verifier still returns `unavailable` in practice (see CR-008).
+2. Claude corrected five mistakes and squashed them into your task commits, so your branches moved. The new tip is agent/gemini/T-020-verifier-two-key at 5516a03. Your worktree is on agent/gemini/T-013-edge-pure with an uncommitted docs/handoffs/GEMINI-progress.md. Do: `git stash && git switch agent/gemini/T-020-verifier-two-key && git stash pop`, commit the progress file, then `git rebase --update-refs main`. Do not reset any branch to an old commit (caac71b and earlier are stale).
+   The corrections: db/reset.sh now works on real Supabase and never replaces auth.uid(); anonymous sign-in on and project id parampara in supabase/config.jsonc; JWT audience must be "authenticated"; effective_scopes requires owner_user_id; a step needs both keys (no VLM-only completion); aborted sessions update mastery for reached steps (19.1) but are not runs.
+3. Real local Supabase is now running (Colima Docker runtime, `supabase start`, project parampara, DB on 127.0.0.1:54322 with real pgvector, auth on 127.0.0.1:54321 issuing ES256 tokens). Use it for all verification from now on, not the Homebrew Postgres on 5432. `supabase status -o env` gives the URLs and keys (never print or commit the keys). If it is down: `colima start` then `supabase start -x studio,imgproxy,vector,logflare,edge-runtime,realtime,mailpit,supavisor`. If your sandbox blocks curl to loopback, make real HTTP calls with a small Python httpx script instead (real tokens from POST {API_URL}/auth/v1/signup with the anon key), and say so in the handoff.
+4. New change requests on main: CR-008 (verifier tries flash, falls back to flash-lite inside one 8 s deadline) and CR-009 (lint code step_without_edge_check). As always, implement a CR only if its Decision line on main says approved.
+
+Phase 2 order (unchanged, plus the new items):
+a. Persistence first: db/pool.py becomes a real psycopg_pool AsyncConnectionPool opened at app startup (no connection per request); repos for sessions, step_events, calibration, mastery, runs, consents (the 21.2 FOR UPDATE append on consent_chain_head, two-connection concurrency test), model_calls, trace_events; the trace bus mirrors to Postgres; Langfuse spans when keys are set. When done, consent on a session created by POST /v1/sessions must work (today it returns 404).
+b. Verifier: frame stored in the frames bucket (local Supabase storage), reference keyframe loaded, one overall 8 s deadline, deterministic predicate coverage check, CR-008 if approved, and docs/research/verifier-latency.md with 10 real calls per variant (flash default, flash thinking_budget 0, flash-lite) including 503 counts.
+c. Then the rest of Phase 2 in the order of the batch 2 prompt, then Phase 3.
+Every route you touch gets a Pydantic response model; Claude is generating the web client from your OpenAPI now.
+```
+
+## Full batch 2 prompt
+
 Before pasting: start Docker Desktop (the Supabase CLI 3.4.0 is installed). Run Gemini from `/Users/dhaanish/Documents/pp-gemini`. Paste the block once; it loops until no unblocked task is left.
 
 ```text

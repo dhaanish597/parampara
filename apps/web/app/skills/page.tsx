@@ -8,7 +8,7 @@ import { useCallback } from "react";
 
 import { StepChip } from "@/components/ui/StepChip";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/States";
-import { unwrap } from "@/lib/api/client";
+import { listSkillVersions } from "@/lib/api/endpoints";
 import type { SkillVersionSummary } from "@/lib/api/types";
 import { useApiQuery } from "@/lib/api/useApiQuery";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -44,11 +44,9 @@ export default function SkillsPage() {
   const { t } = useT();
   const { api, me, status, error: authError, retry } = useAuth();
   const orgId = primaryOrgId(me);
-  const load = useCallback(async () => {
-    const res = await api.GET("/v1/skill-versions", { params: { query: { org_id: orgId } } });
-    return (unwrap(res) as unknown as { items: SkillVersionSummary[] }).items;
-  }, [api, orgId]);
-  const { state, reload } = useApiQuery(load, status === "signedIn" && orgId !== null);
+  const load = useCallback(() => listSkillVersions(api, orgId ?? ""), [api, orgId]);
+  const signedIn = status === "signedIn";
+  const { state, reload } = useApiQuery(load, signedIn && orgId !== null);
 
   return (
     <section className="flex flex-col gap-4">
@@ -56,10 +54,11 @@ export default function SkillsPage() {
       <p className="text-ink-soft">{t("skills.subtitle")}</p>
       {status === "signedOut" || status === "unavailable" ? <EmptyState label="skills.signInFirst" /> : null}
       {status === "error" ? <ErrorState error={authError} onRetry={retry} /> : null}
-      {status === "signedIn" && state.kind === "loading" ? <LoadingState label="skills.loading" /> : null}
-      {state.kind === "error" ? <ErrorState error={state.error} onRetry={reload} /> : null}
-      {state.kind === "ready" && state.data.length === 0 ? <EmptyState label="skills.empty" /> : null}
-      {state.kind === "ready" ? state.data.map((skill) => <SkillCard key={skill.id} skill={skill} />) : null}
+      {signedIn && orgId === null ? <EmptyState label="skills.noOrg" /> : null}
+      {signedIn && orgId !== null && state.kind === "loading" ? <LoadingState label="skills.loading" /> : null}
+      {signedIn && state.kind === "error" ? <ErrorState error={state.error} onRetry={reload} /> : null}
+      {signedIn && state.kind === "ready" && state.data.length === 0 ? <EmptyState label="skills.empty" /> : null}
+      {signedIn && state.kind === "ready" ? state.data.map((skill) => <SkillCard key={skill.id} skill={skill} />) : null}
     </section>
   );
 }

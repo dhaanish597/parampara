@@ -8,8 +8,8 @@ import type { ApiClient, TokenSource } from "../api/client";
 import type { Me, MemberRole } from "../api/types";
 import { readStored, writeStored } from "../storage";
 import { getSupabase } from "../supabase/client";
-import { loadMe, signInAsJudge } from "./judge";
-import { pickActiveRole, rolesOf } from "./roles";
+import { loadOrRejoin, signInAsJudge } from "./judge";
+import { pickActiveRole, restoreOutcome, rolesOf } from "./roles";
 
 const ROLE_KEY = "parampara.activeRole";
 
@@ -49,50 +49,75 @@ interface Setters {
   setError: (error: unknown) => void;
 }
 
-/** Restores an existing Supabase session on load and fetches /v1/me. */
-function useRestoreSession(
+/** Loads /v1/me for an existing session. A 401 means the session is stale: sign it out. */
+async function loadSignedIn(
   api: ApiClient,
-  attempt: number,
-  { setStatus, setMe, setError }: Setters,
+  isAnonymous: boolean,
+  isCancelled: () => boolean,
+  s: Setters,
 ) {
-  useEffect(() => {
-    const supabase = getSupabase();
-    if (!supabase) return setStatus("unavailable");
-    setStatus("loading");
-    void supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) return setStatus("signedOut");
-      try {
-        setMe(await loadMe(api));
-        setError(null);
-        setStatus("signedIn");
-      } catch (err) {
-        setError(err);
-        setStatus("error");
-      }
-    });
-  }, [api, attempt, setStatus, setMe, setError]);
+  try {
+    const me = await loadOrRejoin(api, isAnonymous);
+    if (isCancelled()) return;
+    s.setMe(me);
+    s.setError(null);
+    s.setStatus("signedIn");
+  } catch (err) {
+    if (isCancelled()) return;
+    if (restoreOutcome(err) === "signOut") {
+      await getSupabase()?.auth.signOut().catch(() => undefined);
+      s.setMe(null);
+      return s.setStatus("signedOut");
+    }
+    s.setError(err);
+    s.setStatus("error");
+  }
 }
 
-function useJudgeActions(api: ApiClient, { setStatus, setMe, setError }: Setters) {
+/** Restores the session on load and follows sign-outs from other tabs or failed refreshes. */
+function useRestoreSession(api: ApiClient, attempt: number, s: Setters) {
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return s.setStatus("unavailable");
+    let cancelled = false;
+    s.setStatus("loading");
+    void supabase.auth.getSession().then(({ data }) => {
+      if (cancelled) return;
+      if (!data.session) return s.setStatus("signedOut");
+      void loadSignedIn(api, data.session.user.is_anonymous ?? false, () => cancelled, s);
+    });
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_OUT" || cancelled) return;
+      s.setMe(null);
+      s.setStatus("signedOut");
+    });
+    return () => {
+      cancelled = true;
+      data.subscription.unsubscribe();
+    };
+  }, [api, attempt, s]);
+}
+
+function useJudgeActions(api: ApiClient, s: Setters) {
   const tryAsJudge = useCallback(async () => {
     const supabase = getSupabase();
-    if (!supabase) return setStatus("unavailable");
-    setStatus("signingIn");
-    setError(null);
+    if (!supabase) return s.setStatus("unavailable");
+    s.setStatus("signingIn");
+    s.setError(null);
     try {
-      setMe(await signInAsJudge(supabase, api));
-      setStatus("signedIn");
+      s.setMe(await signInAsJudge(supabase, api));
+      s.setStatus("signedIn");
     } catch (err) {
-      setError(err);
-      setStatus("signedOut");
+      s.setError(err);
+      s.setStatus("signedOut");
     }
-  }, [api, setStatus, setMe, setError]);
+  }, [api, s]);
 
   const signOut = useCallback(async () => {
-    await getSupabase()?.auth.signOut();
-    setMe(null);
-    setStatus("signedOut");
-  }, [setMe, setStatus]);
+    await getSupabase()?.auth.signOut().catch(() => undefined);
+    s.setMe(null);
+    s.setStatus("signedOut");
+  }, [s]);
   return { tryAsJudge, signOut };
 }
 
@@ -118,12 +143,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { tryAsJudge, signOut } = useJudgeActions(api, setters);
   const { savedRole, setActiveRole } = useSavedRole();
 
-  const roles = rolesOf(me);
-  const activeRole = pickActiveRole(roles, savedRole);
-  const value: AuthValue = {
-    status, me, roles, activeRole, error, api, getToken: currentToken, tryAsJudge, signOut,
-    setActiveRole, retry,
-  };
+  const value = useMemo<AuthValue>(() => {
+    const roles = rolesOf(me);
+    return {
+      status, me, roles, activeRole: pickActiveRole(roles, savedRole), error, api,
+      getToken: currentToken, tryAsJudge, signOut, setActiveRole, retry,
+    };
+  }, [status, me, savedRole, error, api, tryAsJudge, signOut, setActiveRole, retry]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

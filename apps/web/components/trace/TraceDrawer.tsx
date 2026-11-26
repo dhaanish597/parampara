@@ -1,6 +1,8 @@
 "use client";
 
 /** Trace drawer (BUILD_PLAN 25.1, 26): right drawer on desktop, bottom sheet on mobile. */
+import { useEffect } from "react";
+
 import type { TraceEvent } from "@parampara/contracts";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -18,7 +20,9 @@ const STATUS_KEY = {
 } as const satisfies Record<StreamStatus, string>;
 
 function TraceRow({ event }: { event: TraceEvent }) {
-  const seconds = event.latency_ms != null ? ` · ${(event.latency_ms / 1000).toFixed(1)} s` : "";
+  const { t } = useT();
+  const seconds =
+    event.latency_ms != null ? ` · ${t("trace.seconds", { value: (event.latency_ms / 1000).toFixed(1) })}` : "";
   return (
     <li className="border-b border-line py-2 last:border-0">
       <div className="text-xs uppercase tracking-wide text-ink-soft">
@@ -40,9 +44,16 @@ export function TraceDrawer({ open, onClose, scope = {} }: {
   const { t } = useT();
   const { getToken, status: authStatus } = useAuth();
   const { events, status } = useTraceStream(getToken, scope, open && authStatus === "signedIn");
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
   if (!open) return null;
   return (
     <aside
+      id="trace-drawer"
       aria-label={t("trace.title")}
       className="fixed inset-x-0 bottom-0 z-40 flex max-h-[60vh] flex-col rounded-t-2xl border border-line bg-surface shadow-xl md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-96 md:rounded-none"
     >
@@ -55,7 +66,7 @@ export function TraceDrawer({ open, onClose, scope = {} }: {
           {t("trace.close")}
         </Button>
       </header>
-      <ol aria-live="polite" className="overflow-y-auto px-4">
+      <ol className="overflow-y-auto px-4">
         {events.length === 0 ? <li className="py-4 text-ink-soft">{t("trace.empty")}</li> : null}
         {events.map((event) => (
           <TraceRow key={event.id} event={event} />

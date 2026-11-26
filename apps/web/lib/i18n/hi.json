@@ -36,7 +36,6 @@
   "step.state.done": "पक्का हुआ",
   "step.state.failed": "जाँच में कमी",
   "step.critical": "ज़रूरी कदम",
-  "step.label": "कदम {order}: {title}",
   "trace.title": "एजेंट गतिविधि",
   "trace.close": "बंद करें",
   "trace.empty": "अभी कोई एजेंट गतिविधि नहीं।",
@@ -50,5 +49,7 @@
   "error.notFound": "नहीं मिला।",
   "error.retry": "फिर से कोशिश करें",
   "error.authUnavailable": "इस सर्वर पर साइन इन चालू नहीं है।",
-  "safety.neverPowered": "बिजली वाले सर्किट पर कभी अभ्यास न करें।"
+  "safety.neverPowered": "बिजली वाले सर्किट पर कभी अभ्यास न करें।",
+  "trace.seconds": "{value} सेकंड",
+  "skills.noOrg": "आप अभी किसी ट्रेनिंग सेंटर से नहीं जुड़े हैं। अपने सुपरवाइज़र से जोड़ने को कहें।"
 }

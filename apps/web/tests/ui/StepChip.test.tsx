@@ -21,8 +21,10 @@ describe("StepChip", () => {
     const chip = screen.getByRole("listitem");
     expect(chip.textContent).toContain(title.hi);
     expect(chip.getAttribute("aria-current")).toBe("step");
-    expect(chip.getAttribute("aria-label")).toContain("अभी का कदम");
-    expect(chip.getAttribute("aria-label")).toContain("ज़रूरी कदम");
+    // State and criticality are announced as text, not hidden in an aria-label on the <li>.
+    expect(chip.getAttribute("aria-label")).toBeNull();
+    expect(chip.textContent).toContain("अभी का कदम");
+    expect(chip.textContent).toContain("ज़रूरी कदम");
   });
 
   it("is not aria-current when pending", () => {

@@ -14,9 +14,10 @@ export function useApiQuery<T>(load: () => Promise<T>, enabled: boolean) {
   const reload = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
+    // Disabled (signed out, or switching user): never keep the previous user's data.
+    setState({ kind: "loading" });
     if (!enabled) return;
     let cancelled = false;
-    setState({ kind: "loading" });
     load().then(
       (data) => !cancelled && setState({ kind: "ready", data }),
       (error: unknown) => !cancelled && setState({ kind: "error", error }),

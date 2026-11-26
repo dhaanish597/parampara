@@ -48,3 +48,14 @@ export function appendTrace(list: TraceEvent[], event: TraceEvent, limit = 50): 
   if (list.some((e) => e.id === event.id)) return list;
   return [event, ...list].slice(0, limit);
 }
+
+/** Query string for the stream scope, skipping unset values. */
+export function traceQuery(scope: Record<string, string | undefined>): string {
+  const entries = Object.entries(scope).filter((e): e is [string, string] => Boolean(e[1]));
+  return new URLSearchParams(entries).toString();
+}
+
+/** Auth failures will not fix themselves by reconnecting. */
+export function shouldStopRetrying(status: number): boolean {
+  return status === 401 || status === 403;
+}
